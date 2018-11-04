@@ -1,15 +1,16 @@
 const fs = require('fs');
 const PNG = require('pngjs').PNG;
+const { outputsDir } = require('./config');
 
 class Png {
 
   constructor({ height, width, blackWhite } = {}) {
 
-    this.height = height || document.body.offsetHeight;
-    this.width = width || document.body.offsetWidth;
-    this.blackWhite = blackWhite || false;
+    this.height = height;
+    this.width = width;
+    this.blackWhite = blackWhite;
     this.create();
-    this.baseDir = './outputs';
+    this.baseDir = outputsDir;
   }
 
   create(){
