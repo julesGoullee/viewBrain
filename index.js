@@ -1,5 +1,5 @@
 const Model = require('./model');
-const { height, width, blackWhite, scale, batchSize } = require('./config');
+const { height, width, blackWhite, seed, scale, batchSize } = require('./config');
 
 const isNode = () => {
   return process.title !== 'browser';
@@ -26,7 +26,7 @@ const isNode = () => {
 
   const viewer = new Viewer({ height, width, blackWhite });
   const inputShape = [width, height];
-  const model = new Model({ inputShape, blackWhite, scale, batchSize });
+  const model = new Model({ inputShape, blackWhite, seed, scale, batchSize });
   const dataImg =  model.generate();
   viewer.draw(dataImg);
 
