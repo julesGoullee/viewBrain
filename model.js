@@ -44,7 +44,7 @@ class Model {
     }));
 
     model.add(tf.layers.dense({
-      units: 32,
+      units: this.units,
       kernelInitializer: initializer,
       biasInitializer: initializer,
       useBias: this.useBias,
@@ -53,9 +53,9 @@ class Model {
 
     model.add(tf.layers.dense({
       units: (this.blackWhite ? 1 : 3),
-      // kernelInitializer: initializer,
-      // useBias: this.useBias,
-      // biasInitializer: initializer,
+      kernelInitializer: initializer,
+      useBias: this.useBias,
+      biasInitializer: initializer,
       activation: 'tanh',
     }));
 
@@ -73,11 +73,11 @@ class Model {
 
     const features = [];
 
-    for(let i = 0; i < this.inputShape[0]; i++){
+    for(let i = 0; i < this.inputShape[1]; i++){
 
-      for(let j = 0; j < this.inputShape[1]; j++){
+      for(let j = 0; j < this.inputShape[0]; j++){
 
-        features.push(Math.pow(i, 2) , Math.pow(j, 2), Math.sqrt(i * i + j * j));
+        features.push(Math.pow(i, 3) , Math.pow(j, 3), Math.sqrt(i * i + j * j));
 
       }
 
@@ -92,7 +92,7 @@ class Model {
 
     console.log(`Predict done output min: ${output.min().dataSync()[0]} max: ${output.max().dataSync()[0]}`);
 
-    return Model.normalize(output.dataSync() );
+    return Model.regularizeTensor(output);
 
   }
 
@@ -143,9 +143,9 @@ class Model {
 
   }
 
-  static normalize(data){
+  static regularizeTensor(data){
 
-    return data.map(d => parseInt( (d+ 1) * 255 / 2) );
+    return data.dataSync().map(d => parseInt( (d+ 1) * 255 / 2) );
 
   }
 
