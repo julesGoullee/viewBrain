@@ -9,8 +9,8 @@ class Model {
     this.seed = seed;
     this.scale = scale;
     this.units = 32;
-    this.numFeatures = 3;
-    this.useBias = true;
+    this.numFeatures = 2;
+    this.useBias = false;
     this.model = this.buildModel();
     this.model.summary();
     this.batchSize = batchSize;
@@ -19,6 +19,7 @@ class Model {
 
   buildModel(){
 
+    // const initializer = null;
     const initializer = tf.initializers.varianceScaling({
       seed: this.seed,
       scale: this.scale,
@@ -32,7 +33,7 @@ class Model {
       kernelInitializer: initializer,
       biasInitializer: initializer,
       useBias: this.useBias,
-      activation: 'tanh',
+      activation: null,
     }));
 
     model.add(tf.layers.dense({
@@ -54,9 +55,10 @@ class Model {
     model.add(tf.layers.dense({
       units: (this.blackWhite ? 1 : 3),
       kernelInitializer: initializer,
-      useBias: this.useBias,
-      biasInitializer: initializer,
-      activation: 'tanh',
+      // useBias: this.useBias,
+      // biasInitializer: initializer,
+      // activation: 'tanh',
+      // activation: 'sigmoid',
     }));
 
     model.compile({
@@ -77,7 +79,7 @@ class Model {
 
       for(let j = 0; j < this.inputShape[0]; j++){
 
-        features.push(Math.pow(i, 3) , Math.pow(j, 3), Math.sqrt(i * i + j * j));
+        features.push(Math.pow(i, 3) , Math.pow(j, 3));
 
       }
 
@@ -89,8 +91,6 @@ class Model {
     console.time('compute');
     const output = this.miniBatch(Model.normalizeTensor(input) );
     console.timeEnd('compute');
-
-    console.log(`Predict done output min: ${output.min().dataSync()[0]} max: ${output.max().dataSync()[0]}`);
 
     return Model.regularizeTensor(output);
 
@@ -143,9 +143,25 @@ class Model {
 
   }
 
+  static aRange(tensor, min, max){
+
+    const minVal = tensor.min().dataSync()[0];
+    const maxVal = tensor.max().dataSync()[0];
+
+    const scale = (max - min) / (maxVal - minVal);
+
+    return tensor.dataSync().map(val => (val + (min - minVal) ) * scale) ;
+
+  }
+
   static regularizeTensor(data){
 
-    return data.dataSync().map(d => parseInt( (d+ 1) * 255 / 2) );
+    // return data.dataSync().map(d => parseInt( (d+ 1) * 255 / 2) );
+    // return data.dataSync().map(d => parseInt( (d) * 255) );
+    const regularize = Model.aRange(data, 0, 255);
+    // console.log(`regularizeTensor: ${Math.min(...regularize)} max: ${Math.max(...regularize)}`);
+
+    return regularize;
 
   }
 
