@@ -8,8 +8,8 @@ class Model {
     this.blackWhite = blackWhite;
     this.seed = seed;
     this.scale = scale;
-    this.units = 8;
-    this.depth = 4;
+    this.units = 32;
+    this.depth = 8;
     this.numFeatures = 3;
     this.useBias = false;
     this.model = this.buildModel();
@@ -53,11 +53,12 @@ class Model {
     model.add(tf.layers.dense({
       units: (this.blackWhite ? 1 : 3),
       // kernelInitializer: initializer,
-      kernelInitializer: tf.initializers.glorotNormal({seed: this.seed }),
+      kernelInitializer: tf.initializers.glorotNormal({ seed: this.seed }),
       useBias: this.useBias,
       biasInitializer: initializer,
-      activation: 'tanh',
-      // activation: 'sigmoid',
+      // activation: 'tanh',
+      // activation: null,
+      activation: 'sigmoid',
     }));
 
     model.compile({
@@ -80,7 +81,11 @@ class Model {
 
       for(let j = 0; j < this.inputShape[0]; j++){
 
-        features.push(Math.pow(i, 2) , Math.pow(j, 2), Math.sqrt(i * i + j * j));
+        features.push(
+          Math.pow(i, 2)
+          , Math.pow(j, 2)
+          , Math.sqrt(i * i + j * j)
+        );
 
       }
 
