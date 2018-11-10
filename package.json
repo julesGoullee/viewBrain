@@ -7,12 +7,19 @@
   "dependencies": {
     "@tensorflow/tfjs": "^0.13.3",
     "@tensorflow/tfjs-node": "^0.1.19",
+    "eslint": "^5.9.0",
+    "eslint-plugin-node": "^8.0.0",
+    "eslint-plugin-promise": "^4.0.1",
     "pngjs": "^3.3.3"
   },
   "scripts": {
     "watch": "cross-env NODE_ENV=development parcel index.html --no-hmr --open",
     "build": "cross-env NODE_ENV=production parcel build index.html --no-minify --public-url ./",
-    "postinstall": "yarn upgrade --pattern @tensorflow"
+    "postinstall": "yarn upgrade --pattern @tensorflow",
+    "lint": "eslint ."
+  },
+  "engines": {
+    "node": "8.12.x"
   },
   "devDependencies": {
     "babel-core": "^6.26.3",

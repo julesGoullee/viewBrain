@@ -8,8 +8,9 @@ class Model {
     this.blackWhite = blackWhite;
     this.seed = seed;
     this.scale = scale;
-    this.units = 32;
-    this.numFeatures = 2;
+    this.units = 8;
+    this.depth = 4;
+    this.numFeatures = 3;
     this.useBias = false;
     this.model = this.buildModel();
     this.model.summary();
@@ -19,13 +20,14 @@ class Model {
 
   buildModel(){
 
-    // const initializer = null;
+    const model = tf.sequential();
+
     const initializer = tf.initializers.varianceScaling({
       seed: this.seed,
       scale: this.scale,
+      mode: 'fanIn',
       distribution: 'normal'
     });
-    const model = tf.sequential();
 
     model.add(tf.layers.dense({
       inputShape: [this.numFeatures],
@@ -33,31 +35,28 @@ class Model {
       kernelInitializer: initializer,
       biasInitializer: initializer,
       useBias: this.useBias,
-      activation: null,
-    }));
-
-    model.add(tf.layers.dense({
-      units: this.units,
-      kernelInitializer: initializer,
-      biasInitializer: initializer,
-      useBias: this.useBias,
       activation: 'tanh',
     }));
 
-    model.add(tf.layers.dense({
-      units: this.units,
-      kernelInitializer: initializer,
-      biasInitializer: initializer,
-      useBias: this.useBias,
-      activation: 'tanh',
-    }));
+    for(let i = 0; i < this.depth; i++){
+
+      model.add(tf.layers.dense({
+        units: this.units,
+        kernelInitializer: initializer,
+        biasInitializer: initializer,
+        useBias: this.useBias,
+        activation: 'tanh',
+      }));
+
+    }
 
     model.add(tf.layers.dense({
       units: (this.blackWhite ? 1 : 3),
-      kernelInitializer: initializer,
-      // useBias: this.useBias,
-      // biasInitializer: initializer,
-      // activation: 'tanh',
+      // kernelInitializer: initializer,
+      kernelInitializer: tf.initializers.glorotNormal({seed: this.seed }),
+      useBias: this.useBias,
+      biasInitializer: initializer,
+      activation: 'tanh',
       // activation: 'sigmoid',
     }));
 
@@ -77,19 +76,24 @@ class Model {
 
     for(let i = 0; i < this.inputShape[1]; i++){
 
+      // const line = [];
+
       for(let j = 0; j < this.inputShape[0]; j++){
 
-        features.push(Math.pow(i, 3) , Math.pow(j, 3));
+        features.push(Math.pow(i, 2) , Math.pow(j, 2), Math.sqrt(i * i + j * j));
 
       }
 
+      // features.push(line);
+
     }
 
-    const input = tf.tensor2d(features, [this.inputShape[0] * this.inputShape[1], this.numFeatures]);
+    const input = tf.tensor2d(features, [this.inputShape[1] * this.inputShape[0], this.numFeatures]);
 
     console.log('tensor ready, predict...');
     console.time('compute');
     const output = this.miniBatch(Model.normalizeTensor(input) );
+    // const output = this.model.predict(Model.normalizeTensor(input));
     console.timeEnd('compute');
 
     return Model.regularizeTensor(output);
@@ -159,7 +163,8 @@ class Model {
     // return data.dataSync().map(d => parseInt( (d+ 1) * 255 / 2) );
     // return data.dataSync().map(d => parseInt( (d) * 255) );
     const regularize = Model.aRange(data, 0, 255);
-    // console.log(`regularizeTensor: ${Math.min(...regularize)} max: ${Math.max(...regularize)}`);
+    // console.log(data.min().dataSync(), data.max().dataSync());
+    // const regularize = data.dataSync().map(val => (val + 2) * (255 / 4));
 
     return regularize;
 

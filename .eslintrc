@@ -13,9 +13,5 @@
   },
   "globals" : {
   },
-  "rules": {
-    "node/no-extraneous-require": ["error", {
-      "allowModules": ["lodash.pick"]
-    }]
-  }
+  "rules": {}
 }

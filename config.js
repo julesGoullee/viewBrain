@@ -1,9 +1,9 @@
 module.exports = {
-  height: 1500,
-  width: 2500,
+  height: 150,
+  width: 250,
   blackWhite: false,
-  seed: 9972116521012623,
-  scale: 100,
+  seed: 991521012603,
+  scale: 20,
   batchSize: 5000,
   outputsDir: './outputs'
 };
