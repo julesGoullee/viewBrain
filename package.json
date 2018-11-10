@@ -10,6 +10,7 @@
     "eslint": "^5.9.0",
     "eslint-plugin-node": "^8.0.0",
     "eslint-plugin-promise": "^4.0.1",
+    "gh-pages": "^2.0.1",
     "pngjs": "^3.3.3"
   },
   "scripts": {
@@ -17,8 +18,7 @@
     "build": "cross-env NODE_ENV=production parcel build index.html --no-minify --public-url ./",
     "postinstall": "yarn upgrade --pattern @tensorflow",
     "lint": "eslint .",
-    "gh-pages": "git subtree push --prefix dist origin gh-pages",
-    "deploy": "yarn build && yarn gh-pages"
+    "deploy": "gh-pages -d dist"
   },
   "engines": {
     "node": "8.12.x"
