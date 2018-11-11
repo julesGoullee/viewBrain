@@ -9,9 +9,12 @@
     "promise"
   ],
   "env": {
-    "node" : true
+    "node" : true,
+    "browser": true
   },
   "globals" : {
   },
-  "rules": {}
+  "rules": {
+    "no-console": "off"
+  }
 }

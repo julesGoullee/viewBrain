@@ -18,7 +18,7 @@
     "build": "cross-env NODE_ENV=production parcel build index.html --no-minify --public-url ./",
     "postinstall": "yarn upgrade --pattern @tensorflow",
     "lint": "eslint .",
-    "deploy": "gh-pages -d dist"
+    "deploy": "yarn build && gh-pages -d dist"
   },
   "engines": {
     "node": "8.12.x"

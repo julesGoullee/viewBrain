@@ -1,34 +1,28 @@
-const Model = require('./model');
 const { height, width, blackWhite, seed, scale, batchSize } = require('./config');
+const { isNode } = require('./utils');
+const Model = require('./model');
+const Render = require('./render');
 
-const isNode = () => {
-  return process.title !== 'browser';
-};
+require('@tensorflow/tfjs');
+
+if(isNode() ){
+
+  require('@tensorflow/tfjs-node');
+
+}
 
 (async () => {
-
-  let Viewer = null;
-
-  if(isNode() ){
-
-    require('@tensorflow/tfjs');
-    require('@tensorflow/tfjs-node');
-    Viewer = require('./png');
-
-  } else {
-
-    Viewer = require('./canvas');
-
-  }
 
   // const viewerRandom = new Viewer({ height, width, blackWhite });
   // viewerRandom.drawRandom();
 
-  const viewer = new Viewer({ height, width, blackWhite });
   const inputShape = [width, height];
   const model = new Model({ inputShape, blackWhite, seed, scale, batchSize });
+  const render = new Render({ height, width, blackWhite });
+
   const dataImg =  model.generate();
-  viewer.draw(dataImg);
+
+  render.draw(dataImg);
 
 
 })().catch(error => console.error(error) );

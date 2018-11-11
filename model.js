@@ -159,7 +159,7 @@ class Model {
 
     const scale = (max - min) / (maxVal - minVal);
 
-    return tensor.dataSync().map(val => (val + (min - minVal) ) * scale) ;
+    return Array.from(tensor.dataSync().map(val => parseInt( (val + (min - minVal) ) * scale), 10) );
 
   }
 
