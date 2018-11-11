@@ -37,12 +37,27 @@ class Render {
     const data = [];
 
     for (let i = 0; i < this.width * this.height * 4; i += 4) {
-      data.push(
-        Render._randomInt(0, 255), // red
-        Render._randomInt(0, 255), // green
-        Render._randomInt(0, 255), // blue
-        255 // alpha
-      );
+
+      if(this.blackWhite){
+
+        const random = Render._randomInt(0, 255);
+        data.push(
+          random, // red
+          random, // green
+          random, // blue
+          255 // alpha
+        );
+
+      } else {
+
+        data.push(
+          Render._randomInt(0, 255), // red
+          Render._randomInt(0, 255), // green
+          Render._randomInt(0, 255), // blue
+          255 // alpha
+        );
+
+      }
 
     }
 
@@ -54,15 +69,32 @@ class Render {
 
     const data = [];
 
-    for (let i = 0; i < rgbData.length; i += 3) {
-      data.push(
-        rgbData[i], // red
-        rgbData[i + 1], // green
-        rgbData[i + 2], // blue
-        255 // alpha
-      );
+    if(this.blackWhite){
+
+      for (let i = 0; i < rgbData.length; i ++) {
+        data.push(
+          rgbData[i], // red
+          rgbData[i], // green
+          rgbData[i], // blue
+          255 // alpha
+        );
+
+      }
+
+    } else {
+
+      for (let i = 0; i < rgbData.length; i += 3) {
+        data.push(
+          rgbData[i], // red
+          rgbData[i + 1], // green
+          rgbData[i + 2], // blue
+          255 // alpha
+        );
+
+      }
 
     }
+
 
     this.viewer.draw(data);
 

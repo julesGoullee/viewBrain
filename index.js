@@ -13,8 +13,8 @@ if(isNode() ){
 
 (async () => {
 
-  // const viewerRandom = new Viewer({ height, width, blackWhite });
-  // viewerRandom.drawRandom();
+  // const renderRandom = new Render({ height, width, blackWhite });
+  // renderRandom.drawRandom();
 
   const inputShape = [width, height];
   const model = new Model({ inputShape, blackWhite, seed, scale, batchSize });
