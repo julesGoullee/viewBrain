@@ -38,6 +38,23 @@ class Model {
       activation: 'tanh',
     }));
 
+    // model.add(tf.layers.conv2d({
+    //   inputShape: [this.inputShape[1], this.inputShape[0], this.numFeatures],
+    //   kernelSize: 3,
+    //   filters: this.numFeatures * 4,
+    //   strides: 1,
+    //   useBias: this.useBias,
+    //   biasInitializer: initializer,
+    //   kernelInitializer: initializer,
+    //   padding: 'same',
+    //   activation: 'tanh'
+    // }));
+    // model.add(tf.layers.maxPooling2d({
+    //   padding: 'same',
+    //   poolSize: this.numFeatures,
+    //   strides: this.numFeatures
+    // }));
+
     for(let i = 0; i < this.depth; i++){
 
       model.add(tf.layers.dense({
@@ -47,8 +64,16 @@ class Model {
         useBias: this.useBias,
         activation: 'tanh',
       }));
-
+      // model.add(tf.layers.conv2d({
+      //   kernelSize: 2,
+      //   filters: this.numFeatures * 4,
+      //   strides: 1,
+      //   kernelInitializer: initializer,
+      //   padding: 'same',
+      //   activation: 'tanh'
+      // }));
     }
+    // model.add(tf.layers.flatten());
 
     model.add(tf.layers.dense({
       units: (this.blackWhite ? 1 : 3),
@@ -94,11 +119,14 @@ class Model {
     }
 
     const input = tf.tensor2d(features, [this.inputShape[1] * this.inputShape[0], this.numFeatures]);
+    // const input = tf.tensor3d(features, [this.inputShape[1], this.inputShape[0], this.numFeatures]);
 
     console.log('tensor ready, predict...');
     console.time('compute');
     const output = this.miniBatch(Model.normalizeTensor(input) );
-    // const output = this.model.predict(Model.normalizeTensor(input));
+    // const output = this.model.predict(Model.normalizeTensor(input)
+      // .reshape([-1, this.inputShape[1], this.inputShape[0], this.numFeatures])
+    // );
     console.timeEnd('compute');
 
     return Model.regularizeTensor(output);
