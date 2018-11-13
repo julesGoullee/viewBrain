@@ -2,33 +2,46 @@
   "name": "view-brain",
   "version": "0.1.0",
   "description": "",
-  "main": "./index.js",
+  "main": "src/image/index.js",
   "private": true,
-  "dependencies": {
-    "@tensorflow/tfjs": "^0.13.3",
-    "@tensorflow/tfjs-node": "^0.1.19",
-    "eslint": "^5.9.0",
-    "eslint-plugin-node": "^8.0.0",
-    "eslint-plugin-promise": "^4.0.1",
-    "gh-pages": "^2.0.1",
-    "pngjs": "^3.3.3"
-  },
   "scripts": {
-    "watch": "cross-env NODE_ENV=development parcel index.html --no-hmr --open",
-    "build": "cross-env NODE_ENV=production parcel build index.html --no-minify --public-url ./",
     "postinstall": "yarn upgrade --pattern @tensorflow",
+    "web:watch": "cross-env NODE_ENV=development parcel src/web/index.html --no-hmr --open",
+    "web:build": "cross-env NODE_ENV=production parcel build src/web/index.html --no-minify --public-url ./",
+    "web:deploy": "yarn web:build && gh-pages -d dist",
+    "image": "node src/image",
+    "app": "node src/app",
     "lint": "eslint .",
-    "deploy": "yarn build && gh-pages -d dist"
+    "test": "mocha -R spec ./test/test.config.js ./test/unit --recursive --timeout 15000"
   },
   "engines": {
     "node": "8.12.x"
   },
+  "dependencies": {
+    "@tensorflow/tfjs": "^0.13.3",
+    "@tensorflow/tfjs-node": "^0.1.19",
+    "dotenv": "^6.1.0",
+    "instagram-web-api": "^2.0.0",
+    "jpeg-js": "^0.3.4",
+    "mongodb": "^3.1.9",
+    "mongoose": "^5.3.11",
+    "tough-cookie-filestore2": "^1.0.0"
+  },
   "devDependencies": {
     "babel-core": "^6.26.3",
-    "babel-plugin-transform-runtime": "~6.23.0",
-    "babel-polyfill": "~6.26.0",
-    "babel-preset-env": "~1.7.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
     "cross-env": "^5.2.0",
-    "parcel-bundler": "~1.10.3"
+    "eslint": "^5.9.0",
+    "eslint-plugin-node": "^8.0.0",
+    "eslint-plugin-promise": "^4.0.1",
+    "gh-pages": "^2.0.1",
+    "mocha": "^5.2.0",
+    "mongodb-memory-server": "^2.7.2",
+    "parcel-bundler": "^1.10.3",
+    "sinon": "^7.1.1"
   }
 }
