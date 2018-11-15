@@ -29,6 +29,8 @@ class Canvas {
 
     this.ctx.putImageData(this.imgData, 0, 0);
 
+    return true;
+
   }
 
 }

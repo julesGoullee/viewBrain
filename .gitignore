@@ -6,3 +6,5 @@ dist
 .cache
 data
 .env
+.nyc_output
+coverage

@@ -1,6 +1,9 @@
+const path = require('path');
 const mongoose = require('mongoose');
 const MongoMemoryServer = require('mongodb-memory-server');
+
 const config = require('../config');
+const Db = require(path.join(srcDir, 'app/db') );
 
 const Mock = {
 
@@ -20,6 +23,12 @@ const Mock = {
   },
 
   async reset(){
+
+    if(!Db.isConnected() ){
+
+      return false;
+
+    }
 
     await mongoose.connection.dropDatabase();
 

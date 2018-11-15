@@ -12,19 +12,40 @@
     "image": "node src/image",
     "app": "node src/app",
     "lint": "eslint .",
-    "test": "mocha -R spec ./test/test.config.js ./test/unit --recursive --timeout 15000"
+    "test": "mocha -R spec ./test/test.config.js ./test/unit --recursive --timeout 15000",
+    "test:coverage": "nyc yarn test"
   },
   "engines": {
     "node": "8.12.x"
   },
+  "nyc": {
+    "cache": true,
+    "extension": [
+      ".js"
+    ],
+    "reporter": [
+      "html",
+      "json",
+      "text-summary"
+    ],
+    "include": [
+      "src"
+    ],
+    "exclude": [
+      "src/image",
+      "src/app/run.js"
+    ]
+  },
   "dependencies": {
     "@tensorflow/tfjs": "^0.13.3",
     "@tensorflow/tfjs-node": "^0.1.19",
+    "bottleneck": "^2.13.0",
     "dotenv": "^6.1.0",
     "instagram-web-api": "^2.0.0",
     "jpeg-js": "^0.3.4",
     "mongodb": "^3.1.9",
     "mongoose": "^5.3.11",
+    "nyc": "^13.1.0",
     "tough-cookie-filestore2": "^1.0.0"
   },
   "devDependencies": {

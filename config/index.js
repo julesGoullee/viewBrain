@@ -3,12 +3,12 @@ require('dotenv').config();
 module.exports = {
 
   image: {
-    height: 150,
-    width: 150,
+    height: 108,
+    width: 108,
     blackWhite: false,
     seed: 99152101211,
     scale: 100,
-    batchSize: 5000,
+    batchSize: 1000,
     outputsDir: './outputs',
   },
 

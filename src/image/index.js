@@ -36,7 +36,7 @@ if(isNode() ){
 
   const dataImg =  model.generate();
 
-  render.draw(dataImg);
+  await render.draw(dataImg);
 
 
 })().catch(error => logger.error(error) );

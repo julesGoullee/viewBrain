@@ -67,7 +67,7 @@ class Render {
 
   }
 
-  draw(rgbData){
+  async draw(rgbData, id = null){
 
     const data = [];
 
@@ -98,7 +98,7 @@ class Render {
     }
 
 
-    this.viewer.draw(data);
+    return this.viewer.draw(data, id);
 
   }
 
