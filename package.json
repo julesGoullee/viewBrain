@@ -32,8 +32,7 @@
       "src"
     ],
     "exclude": [
-      "src/image",
-      "src/app/run.js"
+      "src/image"
     ]
   },
   "dependencies": {

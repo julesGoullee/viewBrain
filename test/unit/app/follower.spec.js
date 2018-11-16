@@ -38,6 +38,17 @@ describe('Follower', () => {
 
   });
 
+  it('Should add default value', async () => {
+
+    await this.follower.save();
+
+    const follower = await Follower.findOne({ instagramId: 'instagramId' });
+    expect(follower.instagramId).to.be.eq('instagramId');
+    expect(follower.username).to.be.eq('username');
+    expect(follower.status).to.be.eq('pending');
+
+  });
+
   it('Should find present follower', async () => {
 
     await this.follower.save();
