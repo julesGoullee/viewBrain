@@ -1,6 +1,6 @@
 const path = require('path');
 
-const Db = require(path.join(srcDir, 'app/db') );
+const Db = require(path.join(srcDir, '/app/db') );
 
 describe('Db', () => {
 

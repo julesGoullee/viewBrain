@@ -2,11 +2,11 @@ const path = require('path');
 const Insta = require('instagram-web-api');
 
 const Config = require(path.join(srcDir, '../config') );
-const { logger } = require(path.join(srcDir, 'utils') );
+const { logger } = require(path.join(srcDir, '/utils') );
 
-const Db = require(path.join(srcDir, 'app/db') );
-const User = require(path.join(srcDir, 'app/user') );
-const Instagram = require(path.join(srcDir, 'app/instagram') );
+const Db = require(path.join(srcDir, '/app/db') );
+const Follower = require(path.join(srcDir, '/app/follower') );
+const Instagram = require(path.join(srcDir, '/app/instagram') );
 
 describe('Instagram', () => {
 
@@ -127,7 +127,7 @@ describe('Instagram', () => {
 
     });
 
-    it('Cannot initialize with invalid user', async () => {
+    it('Cannot initialize with invalid follower', async () => {
 
       this.stubGetProfile.resolves({
         is_email_confirmed: true
@@ -206,17 +206,17 @@ describe('Instagram', () => {
 
       it('Should get new and existing followers with one page', async () => {
 
-        const user = new User({
+        const follower = new Follower({
           instagramId: 'id1',
           username: 'username',
         });
 
-        await user.save();
+        await follower.save();
         this.stubGetFollowers.resolves({
           data: [
             {
-              id: user.instagramId,
-              username: user.username
+              id: follower.instagramId,
+              username: follower.username
             },
             {
               id: 'id2',
@@ -246,28 +246,28 @@ describe('Instagram', () => {
 
       it('Should get existing followers with one page', async () => {
 
-        const user = new User({
+        const follower = new Follower({
           instagramId: 'id1',
           username: 'username',
         });
 
-        const user2 = new User({
+        const follower2 = new Follower({
           instagramId: 'id2',
           username: 'username2',
         });
 
-        await user.save();
-        await user2.save();
+        await follower.save();
+        await follower2.save();
 
         this.stubGetFollowers.resolves({
           data: [
             {
-              id: user.instagramId,
-              username: user.username
+              id: follower.instagramId,
+              username: follower.username
             },
             {
-              id: user2.instagramId,
-              username: user2.username
+              id: follower2.instagramId,
+              username: follower2.username
             }
           ],
           page_info: {
@@ -340,18 +340,18 @@ describe('Instagram', () => {
 
       it('Should get new followers and existing at the beginning with multiple pages and stop at the end', async () => {
 
-        const user = new User({
+        const follower = new Follower({
           instagramId: 'id1',
           username: 'username',
         });
 
-        await user.save();
+        await follower.save();
 
         this.stubGetFollowers.onFirstCall().resolves({
           data: [
             {
-              id: user.instagramId,
-              username: user.username
+              id: follower.instagramId,
+              username: follower.username
             },
             {
               id: 'id2',
@@ -397,16 +397,16 @@ describe('Instagram', () => {
 
       it('Should get new followers and existing at the end with multiple pages and stop at the end', async () => {
 
-        const user = new User({
+        const follower = new Follower({
           instagramId: 'id4',
           username: 'username4',
         });
-        const user2 = new User({
+        const user2 = new Follower({
           instagramId: 'id3',
           username: 'username3',
         });
 
-        await user.save();
+        await follower.save();
         await user2.save();
 
         this.stubGetFollowers.onFirstCall().resolves({
@@ -460,12 +460,12 @@ describe('Instagram', () => {
 
       it('Should get new followers and existing with multiple pages and stop with no new in one page', async () => {
 
-        const user = new User({
+        const follower = new Follower({
           instagramId: 'id4',
           username: 'username4',
         });
 
-        await user.save();
+        await follower.save();
 
         this.stubGetFollowers.onFirstCall().resolves({
           data: [

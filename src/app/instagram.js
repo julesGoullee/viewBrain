@@ -5,7 +5,7 @@ const FileCookieStore = require('tough-cookie-filestore2');
 const Bottleneck = require('bottleneck');
 
 const { logger } = require('../utils');
-const User = require('./user');
+const Follower = require('./follower');
 
 class Instagram {
 
@@ -67,7 +67,7 @@ class Instagram {
       for(let i = 0; i < followers.data.length; i++){
 
         const follower = followers.data[i];
-        const isPresent = await User.isPresent({ instagramId: follower.id });
+        const isPresent = await Follower.isPresent({ instagramId: follower.id });
 
         if(!isPresent){
 
