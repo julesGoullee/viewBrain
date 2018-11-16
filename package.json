@@ -13,7 +13,8 @@
     "app": "node src/app",
     "lint": "eslint .",
     "test": "mocha -R spec ./test/test.config.js ./test/unit --recursive --timeout 15000",
-    "test:coverage": "nyc yarn test"
+    "test:coverage": "nyc yarn test",
+    "test:coverage:check": "nyc check-coverage --statements 100 --branches 100 --functions 100 --lines 100"
   },
   "engines": {
     "node": "8.12.x"
