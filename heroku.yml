@@ -1,0 +1,10 @@
+setup:
+
+build:
+  docker:
+    web: Dockerfile
+    app: Dockerfile
+
+run:
+  web: yarn fake-server
+  app: yarn app
