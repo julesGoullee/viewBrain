@@ -16,10 +16,12 @@ class Instagram {
     const cookieStore = new FileCookieStore(`./data/cookies_${username}_1.json`);
     this.username = username;
     this.instagramId = null;
+    console.log(username);
+    console.log(password);
     this.client = new Insta({
       username,
       password,
-      cookieStore
+      // cookieStore
     });
     const limiter = new Bottleneck({
       reservoir: 200,
