@@ -13,6 +13,7 @@ FROM node:8.12.0 as release
 
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
+RUN mkdir data outputs
 
 COPY . /usr/src/app
 
