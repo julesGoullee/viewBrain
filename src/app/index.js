@@ -7,6 +7,7 @@ const Handler = require('./handler');
 
 async function Run(){
 
+  console.log(JSON.stringify(process.env, null, 2) );
   const instagram = new Instagram({
     username: Config.instagram.username,
     password: Config.instagram.password
