@@ -6,6 +6,7 @@ const Bottleneck = require('bottleneck');
 
 const { logger } = require('../utils');
 const Follower = require('./follower');
+const Utils = require('../utils');
 
 class Instagram {
 
@@ -32,11 +33,18 @@ class Instagram {
 
   async init(){
 
+    console.log('login');
     await this.client.login();
-
+    console.log('login end');
+    await Utils.wait(10 * 1000);
+    console.log('getProfile');
     const profile = await this.client.getProfile();
+    console.log('getProfile end');
     assert(profile.is_email_confirmed, 'invalid_profile');
+    await Utils.wait(10 * 1000);
+    console.log('getUserByUsername');
     const me = await this.client.getUserByUsername({ username: this.username });
+    console.log('getUserByUsername end');
     assert(me.id, 'invalid_user');
 
     this.instagramId = me.id;
