@@ -2,9 +2,10 @@ node_modules
 yarn-error.log
 .DS_Store
 .idea
-dist
-.cache
-data
+
 .env
+dist
+data
+.cache
 .nyc_output
 coverage
