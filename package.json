@@ -9,7 +9,6 @@
     "web:watch": "cross-env NODE_ENV=development parcel src/web/index.html --no-hmr --open",
     "web:build": "cross-env NODE_ENV=production parcel build src/web/index.html --no-minify --public-url ./",
     "web:deploy": "yarn web:build && gh-pages -d dist",
-    "fake-server": "node src/server",
     "image": "node src/image",
     "app": "node src/app",
     "lint": "eslint .",
