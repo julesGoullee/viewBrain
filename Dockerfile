@@ -15,8 +15,8 @@ RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 RUN mkdir data outputs
 
-COPY . /usr/src/app
-
 COPY --from=builder /usr/src/app/node_modules /usr/src/app/node_modules
+
+COPY . /usr/src/app
 
 CMD ["yarn", "app"]
