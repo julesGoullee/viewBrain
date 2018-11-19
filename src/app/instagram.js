@@ -12,7 +12,7 @@ class Instagram {
   constructor({ username, password, proxy = null } = {}) {
 
     assert(username && password, 'invalid_username_or_password');
-    const cookieStore = new FileCookieStore(`./data/cookies_${username}_1.json`);
+    const cookieStore = new FileCookieStore(`./data/cookies_${username}.json`);
     this.username = username;
     this.instagramId = null;
     this.client = new Insta({
