@@ -14,7 +14,8 @@ module.exports = {
 
   instagram: {
     username: process.env.INSTAGRAM_USERNAME,
-    password: process.env.INSTAGRAM_PASSWORD
+    password: process.env.INSTAGRAM_PASSWORD,
+    proxy: process.env.INSTAGRAM_PROXY || null
   },
 
   mongo: {

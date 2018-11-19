@@ -9,7 +9,8 @@ async function Run(){
 
   const instagram = new Instagram({
     username: Config.instagram.username,
-    password: Config.instagram.password
+    password: Config.instagram.password,
+    proxy: Config.instagram.proxy
   });
 
   const handler = new Handler({ instagram });

@@ -6,23 +6,21 @@ const Bottleneck = require('bottleneck');
 
 const { logger } = require('../utils');
 const Follower = require('./follower');
-const Utils = require('../utils');
 
 class Instagram {
 
-  constructor({ username, password } = {}) {
+  constructor({ username, password, proxy = null } = {}) {
 
     assert(username && password, 'invalid_username_or_password');
     const cookieStore = new FileCookieStore(`./data/cookies_${username}_1.json`);
     this.username = username;
     this.instagramId = null;
-    console.log(username);
-    console.log(password);
     this.client = new Insta({
       username,
       password,
-      // cookieStore
-    });
+      cookieStore
+    }, { proxy });
+
     const limiter = new Bottleneck({
       reservoir: 200,
       reservoirRefreshAmount: 200,
@@ -35,18 +33,12 @@ class Instagram {
 
   async init(){
 
-    console.log('login');
     await this.client.login();
-    console.log('login end');
-    await Utils.wait(10 * 1000);
-    console.log('getProfile');
+
     const profile = await this.client.getProfile();
-    console.log('getProfile end');
     assert(profile.is_email_confirmed, 'invalid_profile');
-    await Utils.wait(10 * 1000);
-    console.log('getUserByUsername');
+
     const me = await this.client.getUserByUsername({ username: this.username });
-    console.log('getUserByUsername end');
     assert(me.id, 'invalid_user');
 
     this.instagramId = me.id;
