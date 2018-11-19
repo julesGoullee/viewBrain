@@ -33,7 +33,14 @@ if(require.main === module){
 
   (async () => {
 
-    await Run();
+    let stop = null;
+
+    stop = await Run().catch(error => {
+
+      Utils.logger.error(error);
+      stop && stop();
+
+    });
 
   })().catch(error => Utils.logger.error(error) );
 
