@@ -5,7 +5,7 @@ const FileCookieStore = require('tough-cookie-filestore2');
 const Bottleneck = require('bottleneck');
 
 const Config = require('../../config');
-const { logger } = require('../utils');
+const { logger, wait } = require('../utils');
 const Follower = require('./follower');
 
 class Instagram {
@@ -22,9 +22,10 @@ class Instagram {
       cookieStore
     }, { proxy: Config.instagram.proxy });
 
+    this.coolTimeAfterPublish = 1 * 60 * 1000;
     this.limitedGetFollowers = new Bottleneck({
-      reservoir: Config.instagram.coolTimeGetFollower1min,
-      reservoirRefreshAmount: Config.instagram.coolTimeGetFollower1min,
+      reservoir: Config.instagram.coolTimeGetFollower5min,
+      reservoirRefreshAmount: Config.instagram.coolTimeGetFollower5min,
       reservoirRefreshInterval: 5 * 60 * 1000 // 5 minute
     }).wrap(this.client.getFollowers.bind(this.client) );
     this.limitedGetFollowers = new Bottleneck({
@@ -34,8 +35,8 @@ class Instagram {
     }).wrap(this.limitedGetFollowers);
 
     this.limitedUploadPhoto = new Bottleneck({
-      reservoir: Config.instagram.coolTimeUploadPhoto1min,
-      reservoirRefreshAmount: Config.instagram.coolTimeUploadPhoto1min,
+      reservoir: Config.instagram.coolTimeUploadPhoto5min,
+      reservoirRefreshAmount: Config.instagram.coolTimeUploadPhoto5min,
       reservoirRefreshInterval: 5 * 60 * 1000 // 5 minute
     }).wrap(this.client.uploadPhoto.bind(this.client) );
     this.limitedUploadPhoto = new Bottleneck({
@@ -131,6 +132,8 @@ class Instagram {
       photo,
       caption: `#ok @${username}`
     });
+
+    await wait(this.coolTimeAfterPublish);
     logger.info(`publish end ${username}`);
 
     assert(res.status === 'ok', 'cannot_publish');
