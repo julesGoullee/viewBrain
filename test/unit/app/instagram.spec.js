@@ -57,6 +57,22 @@ describe('Instagram', () => {
 
   });
 
+  it('Should create instance with proxy', () => {
+
+    const instagram = new Instagram({
+      username: 'instagram_username',
+      password: 'instagram_password',
+      proxy: 'proxy'
+    });
+
+    expect(instagram.username).to.be.eq('instagram_username');
+    expect(instagram.instagramId).to.be.null;
+    expect(instagram.client).to.be.an.instanceof(Insta);
+    expect(instagram.limitedGetFollowers).to.exist;
+    expect(instagram.initilized).to.be.false;
+
+  });
+
   it('Cannot create instance without username or password', () => {
 
     expect(() => new Instagram() ).to.throw('invalid_username_or_password');
