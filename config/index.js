@@ -17,9 +17,9 @@ module.exports = {
     password: process.env.INSTAGRAM_PASSWORD,
     proxy: process.env.INSTAGRAM_PROXY || null,
     coolTimeGetFollower1min: process.env.INSTAGRAM_COOL_TIME_GET_FOLLOWER_1_MIN || '1',
-    coolTimeGetFollower1Hour: process.env.INSTAGRAM_COOL_TIME_GET_FOLLOWER_1_HOUR || '1',
-    coolTimeUploadPhoto1min: process.env.INSTAGRAM_COOL_TIME_UPLOAD_PHOTO_1_MIN || '10',
-    coolTimeUploadPhoto1Hour: process.env.INSTAGRAM_COOL_TIME_UPLOAD_PHOTO_1_HOUR || '10',
+    coolTimeGetFollower1Hour: process.env.INSTAGRAM_COOL_TIME_GET_FOLLOWER_1_HOUR || '10',
+    coolTimeUploadPhoto1min: process.env.INSTAGRAM_COOL_TIME_UPLOAD_PHOTO_1_MIN || '1',
+    coolTimeUploadPhoto1Hour: process.env.INSTAGRAM_COOL_TIME_UPLOAD_PHOTO_1_HOUR || '6',
   },
 
   mongo: {
