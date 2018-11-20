@@ -4,12 +4,13 @@ const Insta = require('instagram-web-api');
 const FileCookieStore = require('tough-cookie-filestore2');
 const Bottleneck = require('bottleneck');
 
+const Config = require('../../config');
 const { logger } = require('../utils');
 const Follower = require('./follower');
 
 class Instagram {
 
-  constructor({ username, password, proxy = null } = {}) {
+  constructor({ username, password } = {}) {
 
     assert(username && password, 'invalid_username_or_password');
     const cookieStore = new FileCookieStore(`./data/cookies_${username}.json`);
@@ -19,14 +20,30 @@ class Instagram {
       username,
       password,
       cookieStore
-    }, { proxy });
+    }, { proxy: Config.instagram.proxy });
 
-    const limiter = new Bottleneck({
-      reservoir: 200,
-      reservoirRefreshAmount: 200,
+    this.limitedGetFollowers = new Bottleneck({
+      reservoir: Config.instagram.coolTimeGetFollower1min,
+      reservoirRefreshAmount: Config.instagram.coolTimeGetFollower1min,
+      reservoirRefreshInterval: 60 * 1000 // 1 minute
+    }).wrap(this.client.getFollowers.bind(this.client) );
+    this.limitedGetFollowers = new Bottleneck({
+      reservoir: Config.instagram.coolTimeGetFollower1Hour,
+      reservoirRefreshAmount: Config.instagram.coolTimeGetFollower1Hour,
       reservoirRefreshInterval: 60 * 60 * 1000 // 1 hour
-    });
-    this.limitedGetFollowers = limiter.wrap(this.client.getFollowers.bind(this.client) );
+    }).wrap(this.limitedGetFollowers);
+
+    this.limitedUploadPhoto = new Bottleneck({
+      reservoir: Config.instagram.coolTimeUploadPhoto1min,
+      reservoirRefreshAmount: Config.instagram.coolTimeUploadPhoto1min,
+      reservoirRefreshInterval: 60 * 1000 // 1 minute
+    }).wrap(this.client.uploadPhoto.bind(this.client) );
+    this.limitedUploadPhoto = new Bottleneck({
+      reservoir: Config.instagram.coolTimeUploadPhoto1Hour,
+      reservoirRefreshAmount: Config.instagram.coolTimeUploadPhoto1Hour,
+      reservoirRefreshInterval: 60 * 60 * 1000 // 1 hour
+    }).wrap(this.limitedUploadPhoto);
+
     this.initilized = false;
 
   }
@@ -101,7 +118,7 @@ class Instagram {
 
     assert(this.initilized, 'uninitialized_account');
 
-    const res = await this.client.uploadPhoto({
+    const res = await this.limitedUploadPhoto({
       photo,
       caption: `#ok @${username}`
     });

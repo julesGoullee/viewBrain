@@ -1,5 +1,6 @@
 const Config = require('../../config');
 
+const { logger } = require('../utils');
 const Model = require('../image/model');
 const Render = require('../image/render');
 const Follower = require('./follower');
@@ -23,8 +24,8 @@ class Handler {
     });
 
     const render = new Render({
-      height: Config.image.height,
-      width: Config.image.width,
+      height: parseInt(Config.image.height, 10),
+      width: parseInt(Config.image.width, 10),
       blackWhite: Config.image.blackWhite
     });
 
@@ -36,6 +37,8 @@ class Handler {
   }
 
   async handleOne(follower){
+
+    logger.info(`handleOne ${follower.instagramId}`);
 
     const render = await Handler.getRender(follower.instagramId);
 
@@ -50,6 +53,8 @@ class Handler {
 
   async run(){
 
+    logger.info(`getNewFollowers`);
+
     const newFollowers = await this.instagram.getNewFollowers();
 
     for(let i = 0; i < newFollowers.length; i++){
@@ -61,11 +66,13 @@ class Handler {
 
     }
 
+    logger.info(`getNewFollowers finish with ${newFollowers.length} new`);
+
   }
 
 }
 
-Handler.inputShape = [Config.image.width, Config.image.height];
+Handler.inputShape = [parseInt(Config.image.width, 10), parseInt(Config.image.height, 10)];
 
 module.exports = Handler;
 

@@ -3,8 +3,8 @@ require('dotenv').config();
 module.exports = {
 
   image: {
-    height: 108,
-    width: 108,
+    height: process.env.IMAGE_HEIGHT || '200',
+    width: process.env.IMAGE_WIDTH || '200',
     blackWhite: false,
     seed: 99152101211,
     scale: 100,
@@ -15,7 +15,11 @@ module.exports = {
   instagram: {
     username: process.env.INSTAGRAM_USERNAME,
     password: process.env.INSTAGRAM_PASSWORD,
-    proxy: process.env.INSTAGRAM_PROXY || null
+    proxy: process.env.INSTAGRAM_PROXY || null,
+    coolTimeGetFollower1min: process.env.INSTAGRAM_COOL_TIME_GET_FOLLOWER_1_MIN || '1',
+    coolTimeGetFollower1Hour: process.env.INSTAGRAM_COOL_TIME_GET_FOLLOWER_1_HOUR || '1',
+    coolTimeUploadPhoto1min: process.env.INSTAGRAM_COOL_TIME_UPLOAD_PHOTO_1_MIN || '10',
+    coolTimeUploadPhoto1Hour: process.env.INSTAGRAM_COOL_TIME_UPLOAD_PHOTO_1_HOUR || '10',
   },
 
   mongo: {
