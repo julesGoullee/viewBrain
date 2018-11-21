@@ -25,7 +25,7 @@ if(isNode() ){
     blackWhite: Config.image.blackWhite,
     seed: Config.image.seed,
     scale: Config.image.scale,
-    batchSize: Config.image.batchSize
+    batchSize: parseInt(Config.image.batchSize, 10)
   });
 
   const render = new Render({

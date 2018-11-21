@@ -8,7 +8,7 @@ module.exports = {
     blackWhite: false,
     seed: 99152101211,
     scale: 100,
-    batchSize: 1000,
+    batchSize: process.env.IMAGE_BATCH_SIZE || '1000',
     outputsDir: './outputs',
   },
 
