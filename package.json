@@ -17,7 +17,7 @@
     "test:coverage:check": "nyc check-coverage --statements 100 --branches 100 --functions 100 --lines 100"
   },
   "engines": {
-    "node": "8.12.x"
+    "node": "10.x"
   },
   "nyc": {
     "cache": true,
@@ -37,14 +37,14 @@
     ]
   },
   "dependencies": {
-    "@tensorflow/tfjs": "^0.13.3",
-    "@tensorflow/tfjs-node": "^0.1.19",
+    "@tensorflow/tfjs": "^0.13.5",
+    "@tensorflow/tfjs-node": "^0.1.21",
     "bottleneck": "^2.13.0",
     "dotenv": "^6.1.0",
     "instagram-web-api": "^2.0.0",
     "jpeg-js": "^0.3.4",
-    "mongodb": "^3.1.9",
-    "mongoose": "^5.3.11",
+    "mongodb": "^3.1.10",
+    "mongoose": "^5.3.13",
     "tough-cookie-filestore2": "^1.0.0"
   },
   "devDependencies": {
@@ -60,7 +60,7 @@
     "eslint-plugin-promise": "^4.0.1",
     "gh-pages": "^2.0.1",
     "mocha": "^5.2.0",
-    "mongodb-memory-server": "^2.7.2",
+    "mongodb-memory-server": "^2.7.3",
     "nyc": "^13.1.0",
     "parcel-bundler": "^1.10.3",
     "sinon": "^7.1.1"
