@@ -166,8 +166,16 @@ class Model {
         batchFeatures = batchFeatures.concat(features.slice(i * this.batchSize, this.batchSize));
 
       }
-      const used = process.memoryUsage().heapUsed / (1024 * 1024);
-      logger.info(`Compute ${i + 1}/${totalBach} batch, memory used: ${used.toFixed(2)}`);
+
+      const used = process.memoryUsage();
+
+      for(let key in used){
+
+        logger.info(`${key} ${Math.round(used[key] / 1024 / 1024 * 100) / 100} MB`);
+
+      }
+
+      logger.info(`Compute ${i + 1}/${totalBach} batch`);
       logger.time('compute_one');
       const outputBatch = this.model.predict(batchFeatures);
 
