@@ -7,6 +7,7 @@ run:
     command:
       - yarn app
     image: app
+
   image:
     command:
       - yarn image
