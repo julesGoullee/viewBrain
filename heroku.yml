@@ -3,7 +3,10 @@ build:
     app: Dockerfile
 
 run:
-  app: yarn app
+  app:
+    command:
+      - yarn app
+    image: app
   image:
     command:
       - yarn image
