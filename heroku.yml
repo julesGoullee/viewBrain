@@ -4,3 +4,4 @@ build:
 
 run:
   app: yarn app
+  image: yarn image

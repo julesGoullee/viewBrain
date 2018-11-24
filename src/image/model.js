@@ -125,11 +125,19 @@ class Model {
 
     logger.info('tensor ready, predict...');
     logger.time('compute');
-    const output = this.miniBatch(Model.normalizeTensor(input) );
-    // const output = this.model.predict(Model.normalizeTensor(input)
+
+    const output = tf.tidy(() => {
+
+      return this.miniBatch(Model.normalizeTensor(input) );
+      // const output = this.model.predict(Model.normalizeTensor(input)
       // .reshape([-1, this.inputShape[1], this.inputShape[0], this.numFeatures])
-    // );
+      // );
+
+    });
+
     logger.timeEnd('compute');
+
+    tf.dispose(input);
 
     return Model.regularizeTensor(output);
 
@@ -158,7 +166,8 @@ class Model {
         batchFeatures = batchFeatures.concat(features.slice(i * this.batchSize, this.batchSize));
 
       }
-      logger.info(`Compute ${i + 1}/${totalBach} batch`);
+      const used = process.memoryUsage().heapUsed / (1024 * 1024);
+      logger.info(`Compute ${i + 1}/${totalBach} batch, memory used: ${used.toFixed(2)}`);
       logger.time('compute_one');
       const outputBatch = this.model.predict(batchFeatures);
 
