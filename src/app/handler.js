@@ -1,6 +1,6 @@
 const Config = require('../../config');
 
-const { logger } = require('../utils');
+const Utils = require('../utils');
 const Model = require('../image/model');
 const Render = require('../image/render');
 const Follower = require('./follower');
@@ -15,7 +15,7 @@ class Handler {
 
   static async getRender(instagramId){
 
-    logger.info(`getRender ${instagramId}`);
+    Utils.logger.info(`getRender ${instagramId}`);
 
     const model = new Model({
       inputShape: Handler.inputShape,
@@ -33,7 +33,7 @@ class Handler {
 
     const dataImg = model.generate();
     await render.draw(dataImg, instagramId);
-    logger.info(`getRender finish ${instagramId}`);
+    Utils.logger.info(`getRender finish ${instagramId}`);
 
     return render;
 
@@ -41,7 +41,7 @@ class Handler {
 
   async handleOne(follower){
 
-    logger.info(`handleOne start ${follower.instagramId}`);
+    Utils.logger.info(`handleOne start ${follower.instagramId}`);
 
     const render = await Handler.getRender(follower.instagramId);
 
@@ -52,13 +52,13 @@ class Handler {
     follower.status = 'uploaded';
     await follower.save();
 
-    logger.info(`handleOne finish ${follower.instagramId}`);
+    Utils.logger.info(`handleOne finish ${follower.instagramId}`);
 
   }
 
   async run(){
 
-    logger.info(`Run`);
+    Utils.logger.info(`Run`);
 
     const newFollowers = await this.instagram.getNewFollowers();
 
@@ -68,10 +68,11 @@ class Handler {
       await newFollower.save();
 
       await this.handleOne(newFollower);
+      await Utils.wait(this.instagram.coolTimeAfterPublish);
 
     }
 
-    logger.info(`Run finish with ${newFollowers.length} new`);
+    Utils.logger.info(`Run finish with ${newFollowers.length} new`);
 
   }
 

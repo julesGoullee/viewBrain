@@ -133,7 +133,6 @@ class Instagram {
       caption: `#ok @${username}`
     });
 
-    await wait(this.coolTimeAfterPublish);
     logger.info(`publish end ${username}`);
 
     assert(res.status === 'ok', 'cannot_publish');
