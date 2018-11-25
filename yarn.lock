@@ -664,9 +664,10 @@
   version "0.8.5"
   resolved "https://registry.yarnpkg.com/@tensorflow/tfjs-layers/-/tfjs-layers-0.8.5.tgz#40808ae9c9cc692ab07020d314822ae92860ee1d"
 
-"@tensorflow/tfjs-node@^0.1.19":
+"@tensorflow/tfjs-node@^0.1.21":
   version "0.1.21"
   resolved "https://registry.yarnpkg.com/@tensorflow/tfjs-node/-/tfjs-node-0.1.21.tgz#3df184b6113708ae8d384c86d96b13e43ad0d3f1"
+  integrity sha512-Mtq55vrICyvQo4WY/ib3ZzaJhIzBH/EKKjQZeavdepPTE1hIcW4dwMvU3WQpR55Jqovz0s4xSpnXJx7NEwZQkA==
   dependencies:
     "@tensorflow/tfjs" "~0.13.5"
     adm-zip "^0.4.11"
@@ -675,9 +676,10 @@
     rimraf "^2.6.2"
     tar "^4.4.6"
 
-"@tensorflow/tfjs@^0.13.3", "@tensorflow/tfjs@~0.13.5":
+"@tensorflow/tfjs@^0.13.5", "@tensorflow/tfjs@~0.13.5":
   version "0.13.5"
   resolved "https://registry.yarnpkg.com/@tensorflow/tfjs/-/tfjs-0.13.5.tgz#421fd96bb02ed87ae145c0d87bbb86cb2862c1f3"
+  integrity sha512-a0sbY2IShg+hAD+Es8fy1Ey/afoks4fxSi+PVSZc1st51brCnO3qBbqwDDctRNwx/EOfAroS8IWIKgaWTpsflg==
   dependencies:
     "@tensorflow/tfjs-converter" "0.6.7"
     "@tensorflow/tfjs-core" "0.13.11"
@@ -889,12 +891,6 @@ async-each@^1.0.0:
 async-limiter@~1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/async-limiter/-/async-limiter-1.0.0.tgz#78faed8c3d074ab81f22b4e985d79e8738f720f8"
-
-async@2.4.0:
-  version "2.4.0"
-  resolved "https://registry.yarnpkg.com/async/-/async-2.4.0.tgz#4990200f18ea5b837c2cc4f8c031a6985c385611"
-  dependencies:
-    lodash "^4.14.0"
 
 async@2.6.1, async@^2.5.0, async@^2.6.1:
   version "2.6.1"
@@ -3146,11 +3142,12 @@ get-value@^2.0.3, get-value@^2.0.6:
   version "2.0.6"
   resolved "https://registry.yarnpkg.com/get-value/-/get-value-2.0.6.tgz#dc15ca1c672387ca76bd37ac0a395ba2042a2c28"
 
-getos@^3.1.0:
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/getos/-/getos-3.1.0.tgz#db3aa4df15a3295557ce5e81aa9e3e5cdfaa6567"
+getos@^3.1.1:
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/getos/-/getos-3.1.1.tgz#967a813cceafee0156b0483f7cffa5b3eff029c5"
+  integrity sha512-oUP1rnEhAr97rkitiszGP9EgDVYnmchgFzfqRzSkgtfv7ai6tEi7Ko8GgjNXts7VLWEqrTWyhsOKLe5C5b/Zkg==
   dependencies:
-    async "2.4.0"
+    async "2.6.1"
 
 getpass@^0.1.1:
   version "0.1.7"
@@ -4022,7 +4019,7 @@ lodash.uniq@^4.5.0:
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/lodash.uniq/-/lodash.uniq-4.5.0.tgz#d0225373aeb652adc1bc82e4945339a842754773"
 
-lodash@^4.13.1, lodash@^4.14.0, lodash@^4.17.10, lodash@^4.17.4, lodash@^4.17.5:
+lodash@^4.13.1, lodash@^4.17.10, lodash@^4.17.4, lodash@^4.17.5:
   version "4.17.11"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.11.tgz#b39ea6229ef607ecd89e2c8df12536891cac9b8d"
 
@@ -4246,9 +4243,10 @@ mocha@^5.2.0:
     mkdirp "0.5.1"
     supports-color "5.4.0"
 
-mongodb-core@3.1.7:
-  version "3.1.7"
-  resolved "https://registry.yarnpkg.com/mongodb-core/-/mongodb-core-3.1.7.tgz#fe61853a6a6acbd2046c91794e5325ecad85428a"
+mongodb-core@3.1.9:
+  version "3.1.9"
+  resolved "https://registry.yarnpkg.com/mongodb-core/-/mongodb-core-3.1.9.tgz#c31ee407bf932b0149eaed775c17ee09974e4ca3"
+  integrity sha512-MJpciDABXMchrZphh3vMcqu8hkNf/Mi+Gk6btOimVg1XMxLXh87j6FAvRm+KmwD1A9fpu3qRQYcbQe4egj23og==
   dependencies:
     bson "^1.1.0"
     require_optional "^1.0.1"
@@ -4256,26 +4254,17 @@ mongodb-core@3.1.7:
   optionalDependencies:
     saslprep "^1.0.0"
 
-mongodb-core@3.1.8:
-  version "3.1.8"
-  resolved "https://registry.yarnpkg.com/mongodb-core/-/mongodb-core-3.1.8.tgz#696cd5581c17d4f44f911b9cd089239e3e687b0e"
-  dependencies:
-    bson "^1.1.0"
-    require_optional "^1.0.1"
-    safe-buffer "^5.1.2"
-  optionalDependencies:
-    saslprep "^1.0.0"
-
-mongodb-memory-server@^2.7.2:
-  version "2.7.2"
-  resolved "https://registry.yarnpkg.com/mongodb-memory-server/-/mongodb-memory-server-2.7.2.tgz#929f2e32f33463a00af8619b5eada0495ca599a8"
+mongodb-memory-server@^2.7.3:
+  version "2.7.3"
+  resolved "https://registry.yarnpkg.com/mongodb-memory-server/-/mongodb-memory-server-2.7.3.tgz#b01d7c73d9e9ed6c07e9daa4aa87767d096021dc"
+  integrity sha512-VZ7jECwVgXacKgUM3OHP2h1UToQpYDkCb9KLTdoC4I/6kDHTRIGEXUBfk4sw0YcDCELxhDPi4TBwHW2M9K5txw==
   dependencies:
     "@babel/runtime" "^7.1.2"
     debug "^4.1.0"
     decompress "^4.2.0"
     find-cache-dir "^2.0.0"
     get-port "^4.0.0"
-    getos "^3.1.0"
+    getos "^3.1.1"
     https-proxy-agent "^2.2.1"
     lockfile "^1.0.4"
     md5-file "^4.0.0"
@@ -4283,34 +4272,29 @@ mongodb-memory-server@^2.7.2:
     tmp "^0.0.33"
     uuid "^3.2.1"
 
-mongodb@3.1.8:
-  version "3.1.8"
-  resolved "https://registry.yarnpkg.com/mongodb/-/mongodb-3.1.8.tgz#df8084fda2efdbaddd05dfd6a269891fc4cc72df"
+mongodb@3.1.10, mongodb@^3.1.10:
+  version "3.1.10"
+  resolved "https://registry.yarnpkg.com/mongodb/-/mongodb-3.1.10.tgz#45ad9b74ea376f4122d0881b75e5489b9e504ed7"
+  integrity sha512-Uml42GeFxhTGQVml1XQ4cD0o/rp7J2ROy0fdYUcVitoE7vFqEhKH4TYVqRDpQr/bXtCJVxJdNQC1ntRxNREkPQ==
   dependencies:
-    mongodb-core "3.1.7"
-    safe-buffer "^5.1.2"
-
-mongodb@^3.1.9:
-  version "3.1.9"
-  resolved "https://registry.yarnpkg.com/mongodb/-/mongodb-3.1.9.tgz#9bd205b36b6ddf4bd1fb6c3c31641e1994b62075"
-  dependencies:
-    mongodb-core "3.1.8"
+    mongodb-core "3.1.9"
     safe-buffer "^5.1.2"
 
 mongoose-legacy-pluralize@1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/mongoose-legacy-pluralize/-/mongoose-legacy-pluralize-1.0.2.tgz#3ba9f91fa507b5186d399fb40854bff18fb563e4"
 
-mongoose@^5.3.11:
-  version "5.3.11"
-  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-5.3.11.tgz#ab71e070dabcb8b2aebff4702a09198a3f8a9401"
+mongoose@^5.3.13:
+  version "5.3.13"
+  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-5.3.13.tgz#043d6fd387ea5c13db857b20cf59088f9f393af6"
+  integrity sha512-Vly1oiMpB6vxZ3KklTSmDVDzQQ5nGeU/VTCix6tGqI0B3AJL+ssUr4Vc5YqwmLDLoDO9HGiBIVu4AoACab+h2Q==
   dependencies:
     async "2.6.1"
     bson "~1.1.0"
     kareem "2.3.0"
     lodash.get "4.4.2"
-    mongodb "3.1.8"
-    mongodb-core "3.1.7"
+    mongodb "3.1.10"
+    mongodb-core "3.1.9"
     mongoose-legacy-pluralize "1.0.2"
     mpath "0.5.1"
     mquery "3.2.0"

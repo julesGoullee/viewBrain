@@ -1,5 +1,6 @@
 const path = require('path');
 
+const Utils = require(path.join(srcDir, '/utils') );
 const Db = require(path.join(srcDir, '/app/db') );
 const Model = require(path.join(srcDir, '/image/model') );
 const Render = require(path.join(srcDir, '/image/render') );
@@ -65,6 +66,7 @@ describe('Handler', () => {
   it('Should run', async () => {
 
     const stubHandleOne = this.sandbox.stub(this.handler, 'handleOne');
+    const stubWait = this.sandbox.stub(Utils, 'wait');
 
     this.stubInstagramGetNewFollowers.resolves([
       {
@@ -81,6 +83,7 @@ describe('Handler', () => {
 
     const followers = await Follower.find();
 
+    expect(stubWait.callCount).to.be.eq(2);
     expect(stubHandleOne.callCount).to.be.eq(2);
     expect(stubHandleOne.args[0][0]).to.be.an.instanceOf(Follower);
     expect(stubHandleOne.args[0][0].instagramId).to.be.eq('instagramId');

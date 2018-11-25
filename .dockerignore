@@ -1,0 +1,14 @@
+node_modules
+yarn-error.log
+.DS_Store
+.idea
+.git
+Dockerfile
+
+.env
+dist
+.cache
+data
+.nyc_output
+coverage
+outputs

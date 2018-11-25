@@ -1,0 +1,14 @@
+build:
+  docker:
+    app: Dockerfile
+
+run:
+  app:
+    command:
+      - yarn app
+    image: app
+
+  image:
+    command:
+      - yarn image
+    image: app

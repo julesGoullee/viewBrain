@@ -3,18 +3,23 @@ require('dotenv').config();
 module.exports = {
 
   image: {
-    height: 108,
-    width: 108,
-    blackWhite: false,
+    height: process.env.IMAGE_HEIGHT || '200',
+    width: process.env.IMAGE_WIDTH || '200',
+    blackWhite: process.env.BLACK_AND_WHITE === 'true' || false,
     seed: 99152101211,
     scale: 100,
-    batchSize: 1000,
+    batchSize: process.env.IMAGE_BATCH_SIZE || '1000',
     outputsDir: './outputs',
   },
 
   instagram: {
     username: process.env.INSTAGRAM_USERNAME,
-    password: process.env.INSTAGRAM_PASSWORD
+    password: process.env.INSTAGRAM_PASSWORD,
+    proxy: process.env.INSTAGRAM_PROXY || null,
+    coolTimeGetFollower5min: process.env.INSTAGRAM_COOL_TIME_GET_FOLLOWER_5_MIN || '1',
+    coolTimeGetFollower1Hour: process.env.INSTAGRAM_COOL_TIME_GET_FOLLOWER_1_HOUR || '10',
+    coolTimeUploadPhoto5min: process.env.INSTAGRAM_COOL_TIME_UPLOAD_PHOTO_5_MIN || '1',
+    coolTimeUploadPhoto1Hour: process.env.INSTAGRAM_COOL_TIME_UPLOAD_PHOTO_1_HOUR || '6',
   },
 
   mongo: {

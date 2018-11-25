@@ -125,13 +125,21 @@ class Model {
 
     logger.info('tensor ready, predict...');
     logger.time('compute');
-    const output = this.miniBatch(Model.normalizeTensor(input) );
-    // const output = this.model.predict(Model.normalizeTensor(input)
-      // .reshape([-1, this.inputShape[1], this.inputShape[0], this.numFeatures])
-    // );
-    logger.timeEnd('compute');
 
-    return Model.regularizeTensor(output);
+    const output = tf.tidy(() => {
+
+      return this.miniBatch(Model.normalizeTensor(input) );
+      // const output = this.model.predict(Model.normalizeTensor(input)
+      // .reshape([-1, this.inputShape[1], this.inputShape[0], this.numFeatures])
+      // );
+
+    });
+
+    logger.timeEnd('compute');
+    const regularize = Model.regularizeTensor(output);
+    tf.dispose([input, regularize]);
+
+    return regularize;
 
   }
 
@@ -139,7 +147,7 @@ class Model {
 
     let arePending = true;
     let i = 0;
-    let output = null;
+    let outputs = [];
 
     const totalBach = Math.round(features.shape[0] / this.batchSize);
     logger.info(`Total batch: ${totalBach}`);
@@ -158,19 +166,18 @@ class Model {
         batchFeatures = batchFeatures.concat(features.slice(i * this.batchSize, this.batchSize));
 
       }
-      logger.info(`Compute ${i + 1}/${totalBach} batch`);
-      logger.time('compute_one');
-      const outputBatch = this.model.predict(batchFeatures);
 
-      if(!output){
+      const used = process.memoryUsage();
 
-        output = outputBatch;
+      for(let key in used){
 
-      } else {
-
-        output = output.concat(outputBatch);
+        logger.info(`${key} ${Math.round(used[key] / 1024 / 1024 * 100) / 100} MB`);
 
       }
+
+      logger.info(`Compute ${i + 1}/${totalBach} batch`);
+      logger.time('compute_one');
+      outputs.push(this.model.predict(batchFeatures) );
 
       logger.timeEnd('compute_one');
 
@@ -178,7 +185,7 @@ class Model {
 
     }
 
-    return output;
+    return tf.concat(outputs);
 
   }
 

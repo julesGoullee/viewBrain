@@ -103,4 +103,32 @@ describe('Utils', () => {
 
   });
 
+  it('Should catch with custom handler infinite loop error', async () => {
+
+    const stubError = this.sandbox.stub(Utils.logger, 'error');
+    const onError = this.sandbox.stub();
+
+    let stopFct = null;
+    const fn = this.sandbox.stub().callsFake(() => {
+
+      if(stopFct){
+
+        stopFct();
+        return Promise.reject('fake-error');
+
+      }
+
+      return Promise.resolve();
+
+    });
+
+    stopFct = Utils.infiniteLoop(fn, onError);
+    await Utils.wait(100);
+
+    expect(stubError.called).to.be.false;
+    expect(onError.calledWith('fake-error') ).to.be.true;
+
+
+  });
+
 });

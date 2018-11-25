@@ -152,7 +152,7 @@ describe('Instagram', () => {
       this.stubGetUserByUsername = this.sandbox.stub(this.instagram.client, 'getUserByUsername').resolves({
         id: 'instagram_id'
       });
-      this.stubUploadPhoto = this.sandbox.stub(this.instagram.client, 'uploadPhoto');
+      this.stubUploadPhoto = this.sandbox.stub(this.instagram, 'limitedUploadPhoto');
 
       await this.instagram.init();
 
@@ -162,7 +162,7 @@ describe('Instagram', () => {
 
       beforeEach( () => {
 
-        this.stubGetFollowers = this.sandbox.stub(this.instagram, 'limitedGetFollowers')
+        this.stubGetFollowers = this.sandbox.stub(this.instagram, 'limitedGetFollowers');
 
       });
 

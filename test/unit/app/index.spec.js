@@ -73,4 +73,57 @@ describe('Run', () => {
 
   });
 
+  it('Should catch global errors and disconnect db', async () => {
+
+    const spyLoggerError = this.sandbox.spy(Utils.logger, 'error');
+    const spyDbDisconnect = this.sandbox.spy(Db, 'disconnect');
+
+    const stubStop = this.sandbox.stub();
+    const stubInfiniteLoop = this.sandbox.stub(Utils, 'infiniteLoop').resolves(stubStop);
+
+    this.stubDbConnect.rejects(new Error('fake-error') );
+
+    await Run();
+    expect(spyLoggerError.calledOnce).to.be.true;
+    expect(spyLoggerError.args[0][0].message).to.be.eq('fake-error');
+    expect(spyDbDisconnect.calledOnce).to.be.true;
+    expect(stubInfiniteLoop.called).to.be.false;
+    expect(stubStop.called).to.be.false;
+
+  });
+
+  it('Should catch errors in loop', async () => {
+
+    const spyLoggerError = this.sandbox.spy(Utils.logger, 'error');
+    const spyDbDisconnect = this.sandbox.spy(Db, 'disconnect');
+
+    const spyInfiniteLoop = this.sandbox.spy(Utils, 'infiniteLoop');
+
+    let count = 0;
+
+    this.stubHandleRun.callsFake(() => {
+
+      count++;
+
+      if(count === 5){
+
+        return Promise.reject(new Error('fake-error-1') );
+
+      }
+
+      return Promise.resolve();
+
+    });
+
+    await Run();
+
+    await Utils.wait(500);
+
+    expect(spyLoggerError.calledOnce).to.be.true;
+    expect(spyLoggerError.args[0][0].message).to.be.eq('fake-error-1');
+    expect(spyDbDisconnect.calledOnce).to.be.true;
+    expect(spyInfiniteLoop.calledOnce).to.be.true;
+
+  });
+
 });

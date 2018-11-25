@@ -14,11 +14,9 @@ const Utils = {
 
   },
 
-  infiniteLoop(fn){
+  infiniteLoop(fn, onError = (error) => Utils.logger.error(error)){
 
     let run = true;
-
-    const onError = (error) => Utils.logger.error(error);
 
     async function loop(){
 

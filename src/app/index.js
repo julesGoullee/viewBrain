@@ -7,23 +7,43 @@ const Handler = require('./handler');
 
 async function Run(){
 
-  const instagram = new Instagram({
-    username: Config.instagram.username,
-    password: Config.instagram.password
-  });
+  let stop = null;
 
-  const handler = new Handler({ instagram });
+  const onError = async (error) => {
 
-  await Promise.all([
-    Db.connect(),
-    instagram.init()
-  ]);
+    Utils.logger.error(error);
+    stop && stop();
+    await Db.disconnect();
 
-  return Utils.infiniteLoop(async () => {
+  };
 
-    await handler.run();
+  try {
 
-  });
+    const instagram = new Instagram({
+      username: Config.instagram.username,
+      password: Config.instagram.password
+    });
+
+    const handler = new Handler({ instagram });
+
+    await Promise.all([
+      Db.connect(),
+      instagram.init()
+    ]);
+
+    stop = Utils.infiniteLoop(async () => {
+
+      await handler.run();
+
+    }, onError);
+
+    return stop;
+
+  } catch (error) {
+
+    await onError(error);
+
+  }
 
 }
 
