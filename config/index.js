@@ -5,7 +5,7 @@ module.exports = {
   image: {
     height: process.env.IMAGE_HEIGHT || '200',
     width: process.env.IMAGE_WIDTH || '200',
-    blackWhite: false,
+    blackWhite: process.env.BLACK_AND_WHITE === 'true' || false,
     seed: 99152101211,
     scale: 100,
     batchSize: process.env.IMAGE_BATCH_SIZE || '1000',
