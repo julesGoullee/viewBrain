@@ -136,10 +136,10 @@ class Model {
     });
 
     logger.timeEnd('compute');
+    const regularize = Model.regularizeTensor(output);
+    tf.dispose([input, regularize]);
 
-    tf.dispose(input);
-
-    return Model.regularizeTensor(output);
+    return regularize;
 
   }
 
