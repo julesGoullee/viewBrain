@@ -147,7 +147,7 @@ class Model {
 
     let arePending = true;
     let i = 0;
-    let output = null;
+    let outputs = [];
 
     const totalBach = Math.round(features.shape[0] / this.batchSize);
     logger.info(`Total batch: ${totalBach}`);
@@ -177,17 +177,7 @@ class Model {
 
       logger.info(`Compute ${i + 1}/${totalBach} batch`);
       logger.time('compute_one');
-      const outputBatch = this.model.predict(batchFeatures);
-
-      if(!output){
-
-        output = outputBatch;
-
-      } else {
-
-        output = output.concat(outputBatch);
-
-      }
+      outputs.push(this.model.predict(batchFeatures) );
 
       logger.timeEnd('compute_one');
 
@@ -195,7 +185,7 @@ class Model {
 
     }
 
-    return output;
+    return tf.concat(outputs);
 
   }
 
