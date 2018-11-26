@@ -15,7 +15,7 @@ class Handler {
 
   static async getRender(instagramId){
 
-    Utils.logger.info(`getRender ${instagramId}`);
+    Utils.logger.info('getRender', { instagramId: instagramId });
 
     const model = new Model({
       inputShape: Handler.inputShape,
@@ -33,15 +33,14 @@ class Handler {
 
     const dataImg = model.generate();
     await render.draw(dataImg, instagramId);
-    Utils.logger.info(`getRender finish ${instagramId}`);
-
+    Utils.logger.info('getRender finish', { instagramId: instagramId });
     return render;
 
   }
 
   async handleOne(follower){
 
-    Utils.logger.info(`handleOne start ${follower.instagramId}`);
+    Utils.logger.info('handleOne start', { instagramId: follower.instagramId });
 
     const render = await Handler.getRender(follower.instagramId);
 
@@ -52,13 +51,13 @@ class Handler {
     follower.status = 'uploaded';
     await follower.save();
 
-    Utils.logger.info(`handleOne finish ${follower.instagramId}`);
+    Utils.logger.info('handleOne finish', { instagramId: follower.instagramId });
 
   }
 
   async run(){
 
-    Utils.logger.info(`Run`);
+    Utils.logger.info('Run');
 
     const newFollowers = await this.instagram.getNewFollowers();
 
@@ -72,7 +71,7 @@ class Handler {
 
     }
 
-    Utils.logger.info(`Run finish with ${newFollowers.length} new`);
+    Utils.logger.info('Run finish', { nbFollowers: newFollowers.length });
 
   }
 

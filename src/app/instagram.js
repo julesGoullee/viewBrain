@@ -51,7 +51,7 @@ class Instagram {
 
   async init(){
 
-    logger.info(`Instagram init`);
+    logger.info('Instagram init', { username: this.username });
 
     await this.client.login();
 
@@ -64,7 +64,10 @@ class Instagram {
     this.instagramId = me.id;
     this.initilized = true;
 
-    logger.info(`Instagram connected username: ${this.username} id: ${this.instagramId}`);
+    logger.info('Instagram initialized', {
+      username: this.username,
+      instagramId: this.instagramId
+    });
 
   }
 
@@ -78,7 +81,7 @@ class Instagram {
 
     while(!isEnd){
 
-      logger.info(`getNewFollowers queue`);
+      logger.info('getNewFollowers queue', { instagramId: this.instagramId });
 
       const followers = await this.limitedGetFollowers({
         userId: this.instagramId,
@@ -111,11 +114,11 @@ class Instagram {
       }
 
       after = followers.page_info.end_cursor;
-      logger.info(`getNewFollowers finish`);
+      logger.info('getNewFollowers finish', { instagramId: this.instagramId });
 
     }
 
-    logger.info(`getNewFollowers finish all`);
+    logger.info('getNewFollowers finish all', { instagramId: this.instagramId });
 
 
     return newFollowers;
@@ -126,14 +129,20 @@ class Instagram {
 
     assert(this.initilized, 'uninitialized_account');
 
-    logger.info(`publish queue ${username}`);
+    logger.info('publish queue', {
+      instagramId: this.instagramId,
+      username
+    });
 
     const res = await this.limitedUploadPhoto({
       photo,
       caption: `#ok @${username}`
     });
 
-    logger.info(`publish end ${username}`);
+    logger.info('publish end', {
+      instagramId: this.instagramId,
+      username
+    });
 
     assert(res.status === 'ok', 'cannot_publish');
     return true;

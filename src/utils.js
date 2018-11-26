@@ -1,3 +1,11 @@
+const winston = require('winston');
+
+const logger = winston.createLogger({
+  transports: [
+    new winston.transports.Console()
+  ]
+});
+
 const Utils = {
 
   isNode(){
@@ -5,7 +13,7 @@ const Utils = {
   },
 
   get logger(){
-    return console;
+    return logger;
   },
 
   wait(ms){
