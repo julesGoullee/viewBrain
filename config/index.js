@@ -27,4 +27,5 @@ module.exports = {
     dbName: process.env.MONGO_DB_NAME || 'instagram-dev'
   },
 
+  timberKey: process.env.TIMBER_KEY || null
 };
