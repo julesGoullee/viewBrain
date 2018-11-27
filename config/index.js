@@ -2,11 +2,14 @@ require('dotenv').config();
 
 module.exports = {
 
+  env: process.env.NODE_ENV || 'development',
+
   image: {
     height: process.env.IMAGE_HEIGHT || '200',
     width: process.env.IMAGE_WIDTH || '200',
     blackWhite: process.env.BLACK_AND_WHITE === 'true' || false,
-    seed: 99152101211,
+    // seed: 9202368668,
+    seed: 9062918455,
     scale: 100,
     batchSize: process.env.IMAGE_BATCH_SIZE || '1000',
     outputsDir: './outputs',

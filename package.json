@@ -40,6 +40,7 @@
     "@tensorflow/tfjs": "^0.13.5",
     "@tensorflow/tfjs-node": "^0.1.21",
     "bottleneck": "^2.13.0",
+    "crypto-random-int": "^1.0.1",
     "dotenv": "^6.1.0",
     "instagram-web-api": "^2.0.0",
     "jpeg-js": "^0.3.4",

@@ -4,14 +4,22 @@ const { logger } = require('../utils');
 
 class Model {
 
-  constructor({ inputShape, blackWhite, seed, scale, batchSize } = {}) {
+  constructor({
+                inputShape,
+                blackWhite = false,
+                seed = null,
+                scale = 100,
+                batchSize = 1000,
+                units = 32,
+                depth = 8,
+              } = {}) {
 
     this.inputShape = inputShape;
     this.blackWhite = blackWhite;
     this.seed = seed;
     this.scale = scale;
-    this.units = 32;
-    this.depth = 8;
+    this.units = units;
+    this.depth = depth;
     this.numFeatures = 3;
     this.useBias = false;
     this.model = this.buildModel();
@@ -109,8 +117,8 @@ class Model {
       for(let j = 0; j < this.inputShape[0]; j++){
 
         features.push(
-          Math.pow(i, 2)
-          , Math.pow(j, 2)
+          Math.pow(i - this.inputShape[1], 4)
+          , Math.pow(j - this.inputShape[0], 4)
           , Math.sqrt(i * i + j * j)
         );
 

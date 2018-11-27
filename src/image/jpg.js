@@ -25,7 +25,7 @@ class Jpg {
       height: this.height
     };
 
-    const stream  = fs.createWriteStream(`${this.baseDir}/out_${id}.jpg`);
+    const stream  = fs.createWriteStream(`${this.baseDir}/out_${id || ''}.jpg`);
 
     const encoded = Jpeg.encode(rawImageData, 100);
     stream.write(encoded.data);

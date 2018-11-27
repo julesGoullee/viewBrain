@@ -2168,6 +2168,11 @@ crypto-browserify@^3.11.0:
     randombytes "^2.0.0"
     randomfill "^1.0.3"
 
+crypto-random-int@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/crypto-random-int/-/crypto-random-int-1.0.1.tgz#123c6e1e5c44ffe5ab0952ee02a35119afb42dfb"
+  integrity sha512-HgoR9xKNA7Lr6IVfe8O8aUdjIDXIXPqbK2ldygH9hWLjTiwBik9r26Mvc38zg5sVtFTF2MaPCoaj7a9UBw+8Mg==
+
 css-color-names@0.0.4, css-color-names@^0.0.4:
   version "0.0.4"
   resolved "http://registry.npmjs.org/css-color-names/-/css-color-names-0.0.4.tgz#808adc2e79cf84738069b646cb20ec27beb629e0"
