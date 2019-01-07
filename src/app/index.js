@@ -54,7 +54,7 @@ if(require.main === module){
 
     await Run();
 
-  })().catch(error => Utils.logger.error('Global error', { error }) );
+  })().catch(error => Utils.logger.error(error) );
 
 } else {
 
