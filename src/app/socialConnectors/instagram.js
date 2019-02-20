@@ -4,9 +4,9 @@ const Insta = require('instagram-web-api');
 const FileCookieStore = require('tough-cookie-filestore2');
 const Bottleneck = require('bottleneck');
 
-const Config = require('../../config');
-const { logger, wait } = require('../utils');
-const Follower = require('./follower');
+const Config = require('../../../config');
+const { logger } = require('../../utils');
+const Follower = require('../follower');
 
 class Instagram {
 
@@ -20,28 +20,28 @@ class Instagram {
       username,
       password,
       cookieStore
-    }, { proxy: Config.instagram.proxy });
+    }, { proxy: Config.socialConnectors.instagram.proxy });
 
     this.coolTimeAfterPublish = 1 * 60 * 1000;
     this.limitedGetFollowers = new Bottleneck({
-      reservoir: Config.instagram.coolTimeGetFollower5min,
-      reservoirRefreshAmount: Config.instagram.coolTimeGetFollower5min,
+      reservoir: Config.socialConnectors.instagram.coolTimeGetFollower5min,
+      reservoirRefreshAmount: Config.socialConnectors.instagram.coolTimeGetFollower5min,
       reservoirRefreshInterval: 5 * 60 * 1000 // 5 minute
     }).wrap(this.client.getFollowers.bind(this.client) );
     this.limitedGetFollowers = new Bottleneck({
-      reservoir: Config.instagram.coolTimeGetFollower1Hour,
-      reservoirRefreshAmount: Config.instagram.coolTimeGetFollower1Hour,
+      reservoir: Config.socialConnectors.instagram.coolTimeGetFollower1Hour,
+      reservoirRefreshAmount: Config.socialConnectors.instagram.coolTimeGetFollower1Hour,
       reservoirRefreshInterval: 60 * 60 * 1000 // 1 hour
     }).wrap(this.limitedGetFollowers);
 
     this.limitedUploadPhoto = new Bottleneck({
-      reservoir: Config.instagram.coolTimeUploadPhoto5min,
-      reservoirRefreshAmount: Config.instagram.coolTimeUploadPhoto5min,
+      reservoir: Config.socialConnectors.instagram.coolTimeUploadPhoto5min,
+      reservoirRefreshAmount: Config.socialConnectors.instagram.coolTimeUploadPhoto5min,
       reservoirRefreshInterval: 5 * 60 * 1000 // 5 minute
     }).wrap(this.client.uploadPhoto.bind(this.client) );
     this.limitedUploadPhoto = new Bottleneck({
-      reservoir: Config.instagram.coolTimeUploadPhoto1Hour,
-      reservoirRefreshAmount: Config.instagram.coolTimeUploadPhoto1Hour,
+      reservoir: Config.socialConnectors.instagram.coolTimeUploadPhoto1Hour,
+      reservoirRefreshAmount: Config.socialConnectors.instagram.coolTimeUploadPhoto1Hour,
       reservoirRefreshInterval: 60 * 60 * 1000 // 1 hour
     }).wrap(this.limitedUploadPhoto);
 
@@ -94,12 +94,12 @@ class Instagram {
       for(let i = 0; i < followers.data.length; i++){
 
         const follower = followers.data[i];
-        const isPresent = await Follower.isPresent({ instagramId: follower.id });
+        const isPresent = await Follower.isPresent({ socialId: follower.id });
 
         if(!isPresent){
 
           newFollowers.push({
-            instagramId: follower.id,
+            socialId: follower.id,
             username: follower.username
           });
 
@@ -114,11 +114,11 @@ class Instagram {
       }
 
       after = followers.page_info.end_cursor;
-      logger.info('getNewFollowers finish', { instagramId: this.instagramId });
+      logger.info('getNewFollowers finish', { socialId: this.instagramId });
 
     }
 
-    logger.info('getNewFollowers finish all', { instagramId: this.instagramId });
+    logger.info('getNewFollowers finish all', { socialId: this.instagramId });
 
 
     return newFollowers;
@@ -130,7 +130,7 @@ class Instagram {
     assert(this.initilized, 'uninitialized_account');
 
     logger.info('publish queue', {
-      instagramId: this.instagramId,
+      socialId: this.instagramId,
       username
     });
 
@@ -140,7 +140,7 @@ class Instagram {
     });
 
     logger.info('publish end', {
-      instagramId: this.instagramId,
+      socialId: this.instagramId,
       username
     });
 

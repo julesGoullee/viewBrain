@@ -6,9 +6,9 @@ const { logger } = require(path.join(srcDir, '/utils') );
 
 const Db = require(path.join(srcDir, '/app/db') );
 const Follower = require(path.join(srcDir, '/app/follower') );
-const Instagram = require(path.join(srcDir, '/app/instagram') );
+const Instagram = require(path.join(srcDir, '/app/socialConnectors/instagram') );
 
-describe('Instagram', () => {
+describe('SocialConnectors:Instagram', () => {
 
   before( async () => {
 
@@ -29,7 +29,7 @@ describe('Instagram', () => {
 
     this.sandbox = createSandbox();
     await MockDb.reset();
-    this.instagram = new Instagram({
+    this.socialConnector = new Instagram({
       username: 'instagram_username',
       password: 'instagram_password'
     });
@@ -74,7 +74,7 @@ describe('Instagram', () => {
     ];
 
     await Promise.all(asyncMethods.map(method =>
-      expect(this.instagram[method]() ).to.be.rejectedWith(Error, 'uninitialized_account')
+      expect(this.socialConnector[method]() ).to.be.rejectedWith(Error, 'uninitialized_account')
     ) );
   });
 
@@ -82,9 +82,9 @@ describe('Instagram', () => {
 
     beforeEach( () => {
 
-      this.stubLogin = this.sandbox.stub(this.instagram.client, 'login');
-      this.stubGetProfile = this.sandbox.stub(this.instagram.client, 'getProfile');
-      this.stubGetUserByUsername = this.sandbox.stub(this.instagram.client, 'getUserByUsername');
+      this.stubLogin = this.sandbox.stub(this.socialConnector.client, 'login');
+      this.stubGetProfile = this.sandbox.stub(this.socialConnector.client, 'getProfile');
+      this.stubGetUserByUsername = this.sandbox.stub(this.socialConnector.client, 'getUserByUsername');
 
     });
 
@@ -98,13 +98,13 @@ describe('Instagram', () => {
         id: 'instagram_id'
       });
 
-      await this.instagram.init();
+      await this.socialConnector.init();
       expect(this.stubLogin.calledOnce).to.be.true;
       expect(this.stubGetProfile.calledOnce).to.be.true;
       expect(this.stubGetUserByUsername.calledOnce).to.be.true;
       expect(this.stubGetUserByUsername.calledWith({ username: 'instagram_username' })).to.be.true;
-      expect(this.instagram.initilized).to.be.true;
-      expect(this.instagram.instagramId).to.be.eq('instagram_id');
+      expect(this.socialConnector.initilized).to.be.true;
+      expect(this.socialConnector.instagramId).to.be.eq('instagram_id');
 
     });
 
@@ -112,7 +112,7 @@ describe('Instagram', () => {
 
       this.stubLogin.rejects(new Error('fake-error-login') );
 
-      await expect(this.instagram.init() ).to.be.rejectedWith(Error, 'fake-error-login');
+      await expect(this.socialConnector.init() ).to.be.rejectedWith(Error, 'fake-error-login');
 
     });
 
@@ -122,7 +122,7 @@ describe('Instagram', () => {
         is_email_confirmed: false
       });
 
-      await expect(this.instagram.init() ).to.be.rejectedWith(Error, 'invalid_profile');
+      await expect(this.socialConnector.init() ).to.be.rejectedWith(Error, 'invalid_profile');
       expect(this.stubGetProfile.calledOnce).to.be.true;
 
     });
@@ -134,7 +134,7 @@ describe('Instagram', () => {
       });
 
       this.stubGetUserByUsername.resolves({});
-      await expect(this.instagram.init() ).to.be.rejectedWith(Error, 'invalid_user');
+      await expect(this.socialConnector.init() ).to.be.rejectedWith(Error, 'invalid_user');
       expect(this.stubGetUserByUsername.calledOnce).to.be.true;
 
     });
@@ -145,16 +145,16 @@ describe('Instagram', () => {
 
     beforeEach( async () => {
 
-      this.stubLogin = this.sandbox.stub(this.instagram.client, 'login').resolves();
-      this.stubGetProfile = this.sandbox.stub(this.instagram.client, 'getProfile').resolves({
+      this.stubLogin = this.sandbox.stub(this.socialConnector.client, 'login').resolves();
+      this.stubGetProfile = this.sandbox.stub(this.socialConnector.client, 'getProfile').resolves({
         is_email_confirmed: true
       });
-      this.stubGetUserByUsername = this.sandbox.stub(this.instagram.client, 'getUserByUsername').resolves({
+      this.stubGetUserByUsername = this.sandbox.stub(this.socialConnector.client, 'getUserByUsername').resolves({
         id: 'instagram_id'
       });
-      this.stubUploadPhoto = this.sandbox.stub(this.instagram, 'limitedUploadPhoto');
+      this.stubUploadPhoto = this.sandbox.stub(this.socialConnector, 'limitedUploadPhoto');
 
-      await this.instagram.init();
+      await this.socialConnector.init();
 
     });
 
@@ -162,7 +162,7 @@ describe('Instagram', () => {
 
       beforeEach( () => {
 
-        this.stubGetFollowers = this.sandbox.stub(this.instagram, 'limitedGetFollowers');
+        this.stubGetFollowers = this.sandbox.stub(this.socialConnector, 'limitedGetFollowers');
 
       });
 
@@ -184,7 +184,7 @@ describe('Instagram', () => {
           }
         });
 
-        const followers = await this.instagram.getNewFollowers();
+        const followers = await this.socialConnector.getNewFollowers();
 
         expect(this.stubGetFollowers.calledOnce).to.be.true;
         expect(this.stubGetFollowers.calledWith({
@@ -194,11 +194,11 @@ describe('Instagram', () => {
         }) ).to.be.true;
         expect(followers.length).to.be.eq(2);
         expect(followers[0]).to.be.deep.eq({
-          instagramId: 'id1',
+          socialId: 'id1',
           username: 'username1'
         });
         expect(followers[1]).to.be.deep.eq({
-          instagramId: 'id2',
+          socialId: 'id2',
           username: 'username2'
         });
 
@@ -207,7 +207,7 @@ describe('Instagram', () => {
       it('Should get new and existing followers with one page', async () => {
 
         const follower = new Follower({
-          instagramId: 'id1',
+          socialId: 'id1',
           username: 'username',
         });
 
@@ -215,7 +215,7 @@ describe('Instagram', () => {
         this.stubGetFollowers.resolves({
           data: [
             {
-              id: follower.instagramId,
+              id: follower.socialId,
               username: follower.username
             },
             {
@@ -228,7 +228,7 @@ describe('Instagram', () => {
           }
         });
 
-        const followers = await this.instagram.getNewFollowers();
+        const followers = await this.socialConnector.getNewFollowers();
 
         expect(this.stubGetFollowers.calledOnce).to.be.true;
         expect(this.stubGetFollowers.calledWith({
@@ -238,7 +238,7 @@ describe('Instagram', () => {
         }) ).to.be.true;
         expect(followers.length).to.eq(1);
         expect(followers[0]).to.be.deep.eq({
-          instagramId: 'id2',
+          socialId: 'id2',
           username: 'username2'
         });
 
@@ -247,12 +247,12 @@ describe('Instagram', () => {
       it('Should get existing followers with one page', async () => {
 
         const follower = new Follower({
-          instagramId: 'id1',
+          socialId: 'id1',
           username: 'username',
         });
 
         const follower2 = new Follower({
-          instagramId: 'id2',
+          socialId: 'id2',
           username: 'username2',
         });
 
@@ -262,11 +262,11 @@ describe('Instagram', () => {
         this.stubGetFollowers.resolves({
           data: [
             {
-              id: follower.instagramId,
+              id: follower.socialId,
               username: follower.username
             },
             {
-              id: follower2.instagramId,
+              id: follower2.socialId,
               username: follower2.username
             }
           ],
@@ -275,7 +275,7 @@ describe('Instagram', () => {
           }
         });
 
-        const followers = await this.instagram.getNewFollowers();
+        const followers = await this.socialConnector.getNewFollowers();
 
         expect(this.stubGetFollowers.calledOnce).to.be.true;
         expect(followers.length).to.eq(0);
@@ -317,7 +317,7 @@ describe('Instagram', () => {
           }
         });
 
-        const followers = await this.instagram.getNewFollowers();
+        const followers = await this.socialConnector.getNewFollowers();
 
         expect(this.stubGetFollowers.callCount).to.be.eq(2);
         expect(this.stubGetFollowers.args[1][0]).to.be.deep.eq({
@@ -328,11 +328,11 @@ describe('Instagram', () => {
 
         expect(followers.length).to.eq(4);
         expect(followers[0]).to.be.deep.eq({
-          instagramId: 'id1',
+          socialId: 'id1',
           username: 'username'
         });
         expect(followers[3]).to.be.deep.eq({
-          instagramId: 'id4',
+          socialId: 'id4',
           username: 'username4'
         });
 
@@ -341,7 +341,7 @@ describe('Instagram', () => {
       it('Should get new followers and existing at the beginning with multiple pages and stop at the end', async () => {
 
         const follower = new Follower({
-          instagramId: 'id1',
+          socialId: 'id1',
           username: 'username',
         });
 
@@ -350,7 +350,7 @@ describe('Instagram', () => {
         this.stubGetFollowers.onFirstCall().resolves({
           data: [
             {
-              id: follower.instagramId,
+              id: follower.socialId,
               username: follower.username
             },
             {
@@ -380,16 +380,16 @@ describe('Instagram', () => {
           }
         });
 
-        const followers = await this.instagram.getNewFollowers();
+        const followers = await this.socialConnector.getNewFollowers();
 
         expect(this.stubGetFollowers.callCount).to.be.eq(2);
         expect(followers.length).to.eq(3);
         expect(followers[0]).to.be.deep.eq({
-          instagramId: 'id2',
+          socialId: 'id2',
           username: 'username2'
         });
         expect(followers[2]).to.be.deep.eq({
-          instagramId: 'id4',
+          socialId: 'id4',
           username: 'username4'
         });
 
@@ -398,11 +398,11 @@ describe('Instagram', () => {
       it('Should get new followers and existing at the end with multiple pages and stop at the end', async () => {
 
         const follower = new Follower({
-          instagramId: 'id4',
+          socialId: 'id4',
           username: 'username4',
         });
         const user2 = new Follower({
-          instagramId: 'id3',
+          socialId: 'id3',
           username: 'username3',
         });
 
@@ -443,16 +443,16 @@ describe('Instagram', () => {
           }
         });
 
-        const followers = await this.instagram.getNewFollowers();
+        const followers = await this.socialConnector.getNewFollowers();
 
         expect(this.stubGetFollowers.callCount).to.be.eq(2);
         expect(followers.length).to.eq(2);
         expect(followers[0]).to.be.deep.eq({
-          instagramId: 'id1',
+          socialId: 'id1',
           username: 'username'
         });
         expect(followers[1]).to.be.deep.eq({
-          instagramId: 'id2',
+          socialId: 'id2',
           username: 'username2'
         });
 
@@ -461,7 +461,7 @@ describe('Instagram', () => {
       it('Should get new followers and existing with multiple pages and stop with no new in one page', async () => {
 
         const follower = new Follower({
-          instagramId: 'id4',
+          socialId: 'id4',
           username: 'username4',
         });
 
@@ -500,16 +500,16 @@ describe('Instagram', () => {
           }
         });
 
-        const followers = await this.instagram.getNewFollowers();
+        const followers = await this.socialConnector.getNewFollowers();
 
         expect(this.stubGetFollowers.callCount).to.be.eq(2);
         expect(followers.length).to.eq(3);
         expect(followers[0]).to.be.deep.eq({
-          instagramId: 'id1',
+          socialId: 'id1',
           username: 'username'
         });
         expect(followers[2]).to.be.deep.eq({
-          instagramId: 'id3',
+          socialId: 'id3',
           username: 'username3'
         });
 
@@ -520,8 +520,8 @@ describe('Instagram', () => {
     it.skip('Should return followers in deterministic or after unfollow', async () => {
 
       const instagram = new Instagram({
-        username: Config.instagram.username,
-        password: Config.instagram.password
+        username: Config.socialConnector.username,
+        password: Config.socialConnector.password
       });
 
       await instagram.init();
@@ -537,7 +537,7 @@ describe('Instagram', () => {
         status: 'ok'
       });
 
-      const res = await this.instagram.publish('./outputs/out_id.jpg', 'username');
+      const res = await this.socialConnector.publish('./outputs/out_id.jpg', 'username');
       expect(res).to.be.true;
       expect(this.stubUploadPhoto.calledOnce).to.be.true;
       expect(this.stubUploadPhoto.calledWith({
@@ -553,7 +553,7 @@ describe('Instagram', () => {
         status: 'failed'
       });
 
-      await expect(this.instagram.publish('./outputs/out_id.jpg', 'username') ).to.be.rejectedWith(Error, 'cannot_publish');
+      await expect(this.socialConnector.publish('./outputs/out_id.jpg', 'username') ).to.be.rejectedWith(Error, 'cannot_publish');
 
     });
 
