@@ -16,9 +16,6 @@ if(isNode() ){
 
 (async () => {
 
-  // const renderRandom = new Render({ height, width, blackWhite });
-  // renderRandom.drawRandom();
-
   const inputShape = [parseInt(Config.image.width, 10), parseInt(Config.image.height, 10)];
 
   while(true){ // eslint-disable-line no-constant-condition
@@ -49,6 +46,5 @@ if(isNode() ){
     await render.draw(dataImg, `random_scale-${scale}_units-${units}_depth-${depth}`);
 
   }
-
 
 })().catch(error => logger.error(error) );

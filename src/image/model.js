@@ -116,10 +116,13 @@ class Model {
 
       for(let j = 0; j < this.inputShape[0]; j++){
 
+        const a = i * this.seed;
+        const b = j * this.seed;
+
         features.push(
-          Math.pow(i - this.inputShape[1], 4)
-          , Math.pow(j - this.inputShape[0], 4)
-          , Math.sqrt(i * i + j * j)
+          Math.pow(i - this.inputShape[1], 1)
+          , Math.pow(j - this.inputShape[0], 1)
+          , Math.sqrt(a * a + b * b)
         );
 
       }
