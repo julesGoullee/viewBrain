@@ -25,7 +25,7 @@ class Jpg {
       height: this.height
     };
 
-    const stream  = fs.createWriteStream(`${this.baseDir}/out_${id || ''}.jpg`);
+    const stream  = fs.createWriteStream(`${this.baseDir}/out${id ? `_${id}` : ''}.jpg`);
 
     const encoded = Jpeg.encode(rawImageData, 100);
     stream.write(encoded.data);
@@ -44,7 +44,7 @@ class Jpg {
 
   getPath(id){
 
-    return `${this.baseDir}/out_${id}.jpg`;
+    return `${this.baseDir}/out${id ? `_${id}` : ''}.jpg`;
 
   }
 
@@ -52,7 +52,7 @@ class Jpg {
 
     return new Promise( (resolve, reject) => {
 
-      fs.unlink(`${this.baseDir}/out_${id}.jpg`, (error) => {
+      fs.unlink(`${this.baseDir}/out${id ? `_${id}` : ''}.jpg`, (error) => {
 
         if(error){
 
