@@ -20,7 +20,7 @@ const Utils = {
   },
 
   get logger(){
-    return console;
+    return logger;
   },
 
   wait(ms){

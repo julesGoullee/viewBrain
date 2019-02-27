@@ -1,4 +1,5 @@
 const tf = require('@tensorflow/tfjs');
+const rand = require('random-seed');
 
 const { logger } = require('../utils');
 
@@ -20,7 +21,7 @@ class Model {
     this.scale = scale;
     this.units = units;
     this.depth = depth;
-    this.numFeatures = 3;
+    this.numFeatures = 4;
     this.useBias = false;
     this.model = this.buildModel();
     // this.model.summary();
@@ -91,9 +92,9 @@ class Model {
       kernelInitializer: tf.initializers.glorotNormal({ seed: this.seed }),
       useBias: this.useBias,
       biasInitializer: initializer,
-      // activation: 'tanh',
+      activation: 'tanh',
       // activation: null,
-      activation: 'sigmoid',
+      // activation: 'sigmoid',
     }));
 
     model.compile({
@@ -110,20 +111,20 @@ class Model {
 
     const features = [];
 
+    const z = rand.create(this.seed).floatBetween(-1, 1);
+
     for(let i = 0; i < this.inputShape[1]; i++){
 
       // const line = [];
 
       for(let j = 0; j < this.inputShape[0]; j++){
 
-        const a = i * this.seed;
-        const b = j * this.seed;
-
-        features.push(
-          Math.pow(i - this.inputShape[1], 1)
-          , Math.pow(j - this.inputShape[0], 1)
-          , Math.sqrt(a * a + b * b)
-        );
+        features.push([
+          j - this.inputShape[1] / 2,
+          i - this.inputShape[0] / 2,
+          Math.sqrt( i * i + j * j),
+          z
+        ]);
 
       }
 
