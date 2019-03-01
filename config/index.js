@@ -17,7 +17,8 @@ module.exports = {
 
   socialConnectors: {
 
-    use: process.env.SOCIAL_CONNECTOR_USE || 'instagram',
+    use: process.env.SOCIAL_CONNECTOR_USE || 'twitter',
+
     instagram: {
       username: process.env.SOCIAL_CONNECTOR_INSTAGRAM_USERNAME,
       password: process.env.SOCIAL_CONNECTOR_INSTAGRAM_PASSWORD,
@@ -29,7 +30,14 @@ module.exports = {
     },
 
     twitter: {
-
+      consumerKey: process.env.SOCIAL_CONNECTOR_TWITTER_CONSUMER_KEY,
+      consumerSecret: process.env.SOCIAL_CONNECTOR_TWITTER_CONSUMER_SECRET,
+      accessTokenKey: process.env.SOCIAL_CONNECTOR_TWITTER_ACCESS_TOKEN_KEY,
+      accessTokenSecret: process.env.SOCIAL_CONNECTOR_TWITTER_ACCESS_TOKEN_SECRET,
+      coolTimeGetFollower: process.env.SOCIAL_CONNECTOR_TWITTER_COOL_TIME_GET_FOLLOWER || '15',
+      coolTimeRefreshGetFollower: process.env.SOCIAL_CONNECTOR_TWITTER_COOL_TIME_REFRESH_GET_FOLLOWER || '15',
+      coolTimeUploadPhoto: process.env.SOCIAL_CONNECTOR_TWITTER_COOL_TIME_UPLOAD_PHOTO || '300',
+      coolTimeRefreshUploadPhoto: process.env.SOCIAL_CONNECTOR_TWITTER_COOL_TIME_REFRESH_UPLOAD_PHOTO || '86400',
     }
 
   },

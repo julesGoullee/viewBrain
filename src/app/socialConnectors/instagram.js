@@ -6,16 +6,20 @@ const Bottleneck = require('bottleneck');
 
 const Config = require('../../../config');
 const { logger } = require('../../utils');
+const Interface = require('./interface');
 const Follower = require('../follower');
 
-class Instagram {
+class Instagram extends Interface {
 
   constructor({ username, password } = {}) {
 
-    assert(username && password, 'invalid_username_or_password');
+    super();
+    assert(username && password, 'invalid_credentials');
     const cookieStore = new FileCookieStore(`./data/cookies_${username}.json`);
     this.username = username;
-    this.instagramId = null;
+    this.socialId = null;
+    this.initilized = false;
+
     this.client = new Insta({
       username,
       password,
@@ -45,8 +49,6 @@ class Instagram {
       reservoirRefreshInterval: 60 * 60 * 1000 // 1 hour
     }).wrap(this.limitedUploadPhoto);
 
-    this.initilized = false;
-
   }
 
   async init(){
@@ -61,12 +63,12 @@ class Instagram {
     const me = await this.client.getUserByUsername({ username: this.username });
     assert(me.id, 'invalid_user');
 
-    this.instagramId = me.id;
+    this.socialId = me.id;
     this.initilized = true;
 
     logger.info('Instagram initialized', {
       username: this.username,
-      instagramId: this.instagramId
+      socialId: this.socialId
     });
 
   }
@@ -81,10 +83,10 @@ class Instagram {
 
     while(!isEnd){
 
-      logger.info('getNewFollowers queue', { instagramId: this.instagramId });
+      logger.info('getNewFollowers queue', { socialId: this.socialId });
 
       const followers = await this.limitedGetFollowers({
-        userId: this.instagramId,
+        userId: this.socialId,
         first: 50,
         after
       });
@@ -114,11 +116,11 @@ class Instagram {
       }
 
       after = followers.page_info.end_cursor;
-      logger.info('getNewFollowers finish', { socialId: this.instagramId });
+      logger.info('getNewFollowers batch finish', { socialId: this.socialId });
 
     }
 
-    logger.info('getNewFollowers finish all', { socialId: this.instagramId });
+    logger.info('getNewFollowers finish all', { socialId: this.socialId });
 
 
     return newFollowers;
@@ -130,7 +132,7 @@ class Instagram {
     assert(this.initilized, 'uninitialized_account');
 
     logger.info('publish queue', {
-      socialId: this.instagramId,
+      socialId: this.socialId,
       username
     });
 
@@ -140,7 +142,7 @@ class Instagram {
     });
 
     logger.info('publish end', {
-      socialId: this.instagramId,
+      socialId: this.socialId,
       username
     });
 

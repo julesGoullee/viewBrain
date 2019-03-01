@@ -35,19 +35,23 @@ describe('SocialConnectors', () => {
     const socialConnector = SocialConnectors.init();
     expect(SocialConnectors.instagram).to.be.an.instanceOf(Instagram);
     expect(socialConnector).to.be.eq(SocialConnectors.instagram);
+    expect(SocialConnectors.twitter).not.to.be.exist;
 
   });
 
   it('Should create twitter switch config', () => {
 
     Config.socialConnectors.use = 'twitter';
-    Config.socialConnectors.twitter.username = 'username';
-    Config.socialConnectors.twitter.password = 'password';
+    Config.socialConnectors.twitter.consumerKey = 'consumerKey';
+    Config.socialConnectors.twitter.consumerSecret = 'consumerSecret';
+    Config.socialConnectors.twitter.accessTokenKey = 'accessTokenKey';
+    Config.socialConnectors.twitter.accessTokenSecret = 'accessTokenSecret';
 
-    expect(SocialConnectors.instagram).not.to.be.exist;
+    expect(SocialConnectors.twitter).not.to.be.exist;
     const socialConnector = SocialConnectors.init();
     expect(SocialConnectors.twitter).to.be.an.instanceOf(Twitter);
     expect(socialConnector).to.be.eq(SocialConnectors.twitter);
+    expect(SocialConnectors.instagram).not.to.be.exist;
 
   });
 
