@@ -26,7 +26,6 @@ class Instagram extends Interface {
       cookieStore
     }, { proxy: Config.socialConnectors.instagram.proxy });
 
-    this.coolTimeAfterPublish = 1 * 60 * 1000;
     this.limitedGetFollowers = new Bottleneck({
       reservoir: Config.socialConnectors.instagram.coolTimeGetFollower5min,
       reservoirRefreshAmount: Config.socialConnectors.instagram.coolTimeGetFollower5min,

@@ -54,7 +54,6 @@ describe('SocialConnectors:Instagram', () => {
     expect(instagram.client).to.be.an.instanceof(Insta);
     expect(instagram.limitedGetFollowers).to.exist;
     expect(instagram.limitedUploadPhoto).to.exist;
-    expect(instagram.coolTimeAfterPublish).to.exist;
     expect(instagram.initilized).to.be.false;
 
   });

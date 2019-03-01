@@ -1,6 +1,10 @@
 class SocialConnector {
 
-  constructor(){}
+  constructor(){
+
+    this.coolTimeAfterPublish = 30 * 1000; // 30s
+
+  }
 
   async init(){
 
