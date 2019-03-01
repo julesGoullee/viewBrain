@@ -20,8 +20,10 @@ const SocialConnectors = {
       case 'twitter' :
 
         SocialConnectors.twitter = new Twitter({
-          username: Config.socialConnectors.twitter.username,
-          password: Config.socialConnectors.twitter.password
+          consumerKey: Config.socialConnectors.twitter.consumerKey,
+          consumerSecret: Config.socialConnectors.twitter.consumerSecret,
+          accessTokenKey: Config.socialConnectors.twitter.accessTokenKey,
+          accessTokenSecret: Config.socialConnectors.twitter.accessTokenSecret,
         });
 
         break;

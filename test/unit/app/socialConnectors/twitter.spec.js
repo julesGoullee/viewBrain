@@ -1,14 +1,15 @@
 const path = require('path');
-const Insta = require('instagram-web-api');
+const Twit = require('twitter');
+const fs = require('fs');
 
 const Config = require(path.join(srcDir, '../config') );
 const { logger } = require(path.join(srcDir, '/utils') );
 
 const Db = require(path.join(srcDir, '/app/db') );
 const Follower = require(path.join(srcDir, '/app/follower') );
-const Instagram = require(path.join(srcDir, '/app/socialConnectors/instagram') );
+const Twitter = require(path.join(srcDir, '/app/socialConnectors/twitter') );
 
-describe('SocialConnectors:Instagram', () => {
+describe('SocialConnectors:Twitter', () => {
 
   before( async () => {
 
@@ -29,9 +30,11 @@ describe('SocialConnectors:Instagram', () => {
 
     this.sandbox = createSandbox();
     await MockDb.reset();
-    this.socialConnector = new Instagram({
-      username: 'instagram_username',
-      password: 'instagram_password'
+    this.socialConnector = new Twitter({
+      consumerKey: 'consumerKey',
+      consumerSecret: 'consumerSecret',
+      accessTokenKey: 'accessTokenKey',
+      accessTokenSecret: 'accessTokenSecret'
     });
 
   });
@@ -44,27 +47,30 @@ describe('SocialConnectors:Instagram', () => {
 
   it('Should create instance', () => {
 
-    const instagram = new Instagram({
-      username: 'instagram_username',
-      password: 'instagram_password'
+    const twitter = new Twitter({
+      consumerKey: 'consumerKey',
+      consumerSecret: 'consumerSecret',
+      accessTokenKey: 'accessTokenKey',
+      accessTokenSecret: 'accessTokenSecret'
     });
 
-    expect(instagram.username).to.be.eq('instagram_username');
-    expect(instagram.socialId).to.be.null;
-    expect(instagram.client).to.be.an.instanceof(Insta);
-    expect(instagram.limitedGetFollowers).to.exist;
-    expect(instagram.limitedUploadPhoto).to.exist;
-    expect(instagram.coolTimeAfterPublish).to.exist;
-    expect(instagram.initilized).to.be.false;
+    expect(twitter.socialId).to.be.null;
+    expect(twitter.client).to.be.an.instanceof(Twit);
+    expect(twitter.limitedGetFollowers).to.exist;
+    expect(twitter.limitedUploadPhoto).to.exist;
+    expect(twitter.limitedUploadPhoto).to.exist;
+    expect(twitter.initilized).to.be.false;
 
   });
 
   it('Cannot create instance without all credentials', () => {
 
-    expect(() => new Instagram() ).to.throw('invalid_credentials');
-    expect(() => new Instagram({}) ).to.throw('invalid_credentials');
-    expect(() => new Instagram({ username: 'username'}) ).to.throw('invalid_credentials');
-    expect(() => new Instagram({ password: 'password'}) ).to.throw('invalid_credentials');
+    expect(() => new Twitter() ).to.throw('invalid_credentials');
+    expect(() => new Twitter({}) ).to.throw('invalid_credentials');
+    expect(() => new Twitter({ consumerKey: 'consumerKey'}) ).to.throw('invalid_credentials');
+    expect(() => new Twitter({ consumerSecret: 'consumerSecret'}) ).to.throw('invalid_credentials');
+    expect(() => new Twitter({ accessTokenKey: 'accessTokenKey'}) ).to.throw('invalid_credentials');
+    expect(() => new Twitter({ accessTokenSecret: 'accessTokenSecret'}) ).to.throw('invalid_credentials');
 
   });
 
@@ -84,60 +90,46 @@ describe('SocialConnectors:Instagram', () => {
 
     beforeEach( () => {
 
-      this.stubLogin = this.sandbox.stub(this.socialConnector.client, 'login');
-      this.stubGetProfile = this.sandbox.stub(this.socialConnector.client, 'getProfile');
-      this.stubGetUserByUsername = this.sandbox.stub(this.socialConnector.client, 'getUserByUsername');
+      this.stubGet = this.sandbox.stub(this.socialConnector.client, 'getAsync');
 
     });
 
     it('Should initialize', async () => {
 
-      this.stubGetProfile.resolves({
-        is_email_confirmed: true
-      });
-
-      this.stubGetUserByUsername.resolves({
-        id: 'instagram_id'
+      this.stubGet.resolves({
+        screen_name: 'screen_name',
+        id: 'twitter_id'
       });
 
       await this.socialConnector.init();
-      expect(this.stubLogin.calledOnce).to.be.true;
-      expect(this.stubGetProfile.calledOnce).to.be.true;
-      expect(this.stubGetUserByUsername.calledOnce).to.be.true;
-      expect(this.stubGetUserByUsername.calledWith({ username: 'instagram_username' })).to.be.true;
+      expect(this.stubGet.calledOnce).to.be.true;
+      expect(this.stubGet.calledWith('account/verify_credentials') ).to.be.true;
       expect(this.socialConnector.initilized).to.be.true;
-      expect(this.socialConnector.socialId).to.be.eq('instagram_id');
+      expect(this.socialConnector.socialId).to.be.eq('twitter_id');
 
     });
 
     it('Cannot initialize if login failed', async () => {
 
-      this.stubLogin.rejects(new Error('fake-error-login') );
+      this.stubGet.rejects(new Error('fake-error-login') );
 
       await expect(this.socialConnector.init() ).to.be.rejectedWith(Error, 'fake-error-login');
 
     });
 
-    it('Cannot initialize with invalid profile', async () => {
+    it('Cannot initialize with invalid user', async () => {
 
-      this.stubGetProfile.resolves({
-        is_email_confirmed: false
+      this.stubGet.resolves({
+        screen_name: 'screen_name'
       });
 
-      await expect(this.socialConnector.init() ).to.be.rejectedWith(Error, 'invalid_profile');
-      expect(this.stubGetProfile.calledOnce).to.be.true;
-
-    });
-
-    it('Cannot initialize with invalid follower', async () => {
-
-      this.stubGetProfile.resolves({
-        is_email_confirmed: true
-      });
-
-      this.stubGetUserByUsername.resolves({});
       await expect(this.socialConnector.init() ).to.be.rejectedWith(Error, 'invalid_user');
-      expect(this.stubGetUserByUsername.calledOnce).to.be.true;
+      expect(this.stubGet.calledOnce).to.be.true;
+
+      this.stubGet.resolves({
+        id: 'id'
+      });
+      await expect(this.socialConnector.init() ).to.be.rejectedWith(Error, 'invalid_user');
 
     });
 
@@ -147,14 +139,12 @@ describe('SocialConnectors:Instagram', () => {
 
     beforeEach( async () => {
 
-      this.stubLogin = this.sandbox.stub(this.socialConnector.client, 'login').resolves();
-      this.stubGetProfile = this.sandbox.stub(this.socialConnector.client, 'getProfile').resolves({
-        is_email_confirmed: true
-      });
-      this.stubGetUserByUsername = this.sandbox.stub(this.socialConnector.client, 'getUserByUsername').resolves({
-        id: 'instagram_id'
+      this.stubGet = this.sandbox.stub(this.socialConnector.client, 'getAsync').resolves({
+        screen_name: 'screen_name',
+        id: 'twitter_id'
       });
       this.stubUploadPhoto = this.sandbox.stub(this.socialConnector, 'limitedUploadPhoto');
+      this.stubUploadPhotoTweet = this.sandbox.stub(this.socialConnector, 'limitedUploadPhotoTweet');
 
       await this.socialConnector.init();
 
@@ -171,28 +161,26 @@ describe('SocialConnectors:Instagram', () => {
       it('Should get only new followers with one page', async () => {
 
         this.stubGetFollowers.resolves({
-          data: [
+          users: [
             {
               id: 'id1',
-              username: 'username1'
+              screen_name: 'username1'
             },
             {
               id: 'id2',
-              username: 'username2'
+              screen_name: 'username2'
             }
           ],
-          page_info: {
-            has_next_page: false
-          }
+          next_cursor: 0
         });
 
         const followers = await this.socialConnector.getNewFollowers();
 
         expect(this.stubGetFollowers.calledOnce).to.be.true;
-        expect(this.stubGetFollowers.calledWith({
-          userId: 'instagram_id',
-          first: 50,
-          after: null
+        expect(this.stubGetFollowers.calledWith('followers/list', {
+          count: 200,
+          skip_status: true,
+          cursor: -1
         }) ).to.be.true;
         expect(followers.length).to.be.eq(2);
         expect(followers[0]).to.be.deep.eq({
@@ -215,28 +203,26 @@ describe('SocialConnectors:Instagram', () => {
 
         await follower.save();
         this.stubGetFollowers.resolves({
-          data: [
+          users: [
             {
               id: follower.socialId,
-              username: follower.username
+              screen_name: follower.username
             },
             {
               id: 'id2',
-              username: 'username2'
+              screen_name: 'username2'
             }
           ],
-          page_info: {
-            has_next_page: false
-          }
+          next_cursor: 0
         });
 
         const followers = await this.socialConnector.getNewFollowers();
 
         expect(this.stubGetFollowers.calledOnce).to.be.true;
-        expect(this.stubGetFollowers.calledWith({
-          userId: 'instagram_id',
-          first: 50,
-          after: null
+        expect(this.stubGetFollowers.calledWith('followers/list', {
+          count: 200,
+          skip_status: true,
+          cursor: -1
         }) ).to.be.true;
         expect(followers.length).to.eq(1);
         expect(followers[0]).to.be.deep.eq({
@@ -262,19 +248,17 @@ describe('SocialConnectors:Instagram', () => {
         await follower2.save();
 
         this.stubGetFollowers.resolves({
-          data: [
+          users: [
             {
               id: follower.socialId,
-              username: follower.username
+              screen_name: follower.username
             },
             {
               id: follower2.socialId,
-              username: follower2.username
+              screen_name: follower2.username
             }
           ],
-          page_info: {
-            has_next_page: false
-          }
+          next_cursor: 0
         });
 
         const followers = await this.socialConnector.getNewFollowers();
@@ -287,50 +271,45 @@ describe('SocialConnectors:Instagram', () => {
       it('Should get only new followers with multiple pages and stop at the last page', async () => {
 
         this.stubGetFollowers.onFirstCall().resolves({
-          data: [
+          users: [
             {
               id: 'id1',
-              username: 'username',
+              screen_name: 'username',
             },
             {
               id: 'id2',
-              username: 'username2',
+              screen_name: 'username2',
             }
           ],
-          page_info: {
-            has_next_page: true,
-            end_cursor: 'end_cursor'
-          }
+          next_cursor: 'next_cursor'
         });
 
         this.stubGetFollowers.onSecondCall().resolves({
-          data: [
+          users: [
             {
               id: 'id3',
-              username: 'username3',
+              screen_name: 'username3',
             },
             {
               id: 'id4',
-              username: 'username4',
+              screen_name: 'username4',
             }
           ],
-          page_info: {
-            has_next_page: false
-          }
+          next_cursor: 0
         });
 
         const followers = await this.socialConnector.getNewFollowers();
 
         expect(this.stubGetFollowers.callCount).to.be.eq(2);
-        expect(this.stubGetFollowers.args[0][0]).to.be.deep.eq({
-          userId: 'instagram_id',
-          first: 50,
-          after: null
+        expect(this.stubGetFollowers.args[0][0]).to.be.deep.eq('followers/list', {
+          count: 200,
+          skip_status: true,
+          cursor: -1
         });
-        expect(this.stubGetFollowers.args[1][0]).to.be.deep.eq({
-          userId: 'instagram_id',
-          first: 50,
-          after: 'end_cursor'
+        expect(this.stubGetFollowers.args[1][0]).to.be.deep.eq('followers/list', {
+          count: 200,
+          skip_status: true,
+          cursor: 'next_cursor'
         });
 
         expect(followers.length).to.eq(4);
@@ -355,36 +334,31 @@ describe('SocialConnectors:Instagram', () => {
         await follower.save();
 
         this.stubGetFollowers.onFirstCall().resolves({
-          data: [
+          users: [
             {
               id: follower.socialId,
-              username: follower.username
+              screen_name: follower.username
             },
             {
               id: 'id2',
-              username: 'username2',
+              screen_name: 'username2',
             }
           ],
-          page_info: {
-            has_next_page: true,
-            end_cursor: 'end_cursor'
-          }
+          next_cursor: 'next_cursor'
         });
 
         this.stubGetFollowers.onSecondCall().resolves({
-          data: [
+          users: [
             {
               id: 'id3',
-              username: 'username3',
+              screen_name: 'username3',
             },
             {
               id: 'id4',
-              username: 'username4',
+              screen_name: 'username4',
             }
           ],
-          page_info: {
-            has_next_page: false
-          }
+          next_cursor: 0
         });
 
         const followers = await this.socialConnector.getNewFollowers();
@@ -417,37 +391,31 @@ describe('SocialConnectors:Instagram', () => {
         await user2.save();
 
         this.stubGetFollowers.onFirstCall().resolves({
-          data: [
+          users: [
             {
               id: 'id1',
-              username: 'username',
+              screen_name: 'username',
             },
             {
               id: 'id2',
-              username: 'username2',
+              screen_name: 'username2',
             }
           ],
-          page_info: {
-            has_next_page: true,
-            end_cursor: 'end_cursor'
-          }
+          next_cursor: 'next_cursor'
         });
 
         this.stubGetFollowers.onSecondCall().resolves({
-          data: [
+          users: [
             {
               id: 'id3',
-              username: 'username3',
+              screen_name: 'username3',
             },
             {
               id: 'id4',
-              username: 'username4',
+              screen_name: 'username4',
             }
           ],
-          page_info: {
-            has_next_page: true,
-            end_cursor: 'end_cursor1'
-          }
+          next_cursor: 0
         });
 
         const followers = await this.socialConnector.getNewFollowers();
@@ -475,36 +443,31 @@ describe('SocialConnectors:Instagram', () => {
         await follower.save();
 
         this.stubGetFollowers.onFirstCall().resolves({
-          data: [
+          users: [
             {
               id: 'id1',
-              username: 'username',
+              screen_name: 'username',
             },
             {
               id: 'id2',
-              username: 'username2',
+              screen_name: 'username2',
             }
           ],
-          page_info: {
-            has_next_page: true,
-            end_cursor: 'end_cursor'
-          }
+          next_cursor: 'next_cursor'
         });
 
         this.stubGetFollowers.onSecondCall().resolves({
-          data: [
+          users: [
             {
               id: 'id3',
-              username: 'username3',
+              screen_name: 'username3',
             },
             {
               id: 'id4',
-              username: 'username4',
+              screen_name: 'username4',
             }
           ],
-          page_info: {
-            has_next_page: false
-          }
+          next_cursor: 0
         });
 
         const followers = await this.socialConnector.getNewFollowers();
@@ -524,43 +487,85 @@ describe('SocialConnectors:Instagram', () => {
 
     });
 
-    it.skip('Should return followers in deterministic or after unfollow', async () => {
-
-      const instagram = new Instagram({
-        username: Config.socialConnector.username,
-        password: Config.socialConnector.password
-      });
-
-      await instagram.init();
-
-      const followers = await instagram.getNewFollowers();
-      logger.info('followers', { followers });
-
-    });
-
     it('Should publish', async () => {
 
       this.stubUploadPhoto.resolves({
-        status: 'ok'
+        media_id_string: 'media_id_string'
+      });
+
+      this.stubUploadPhotoTweet.resolves({
+        id: 'id'
       });
 
       const res = await this.socialConnector.publish('./outputs/out_id.jpg', 'username');
       expect(res).to.be.true;
+
       expect(this.stubUploadPhoto.calledOnce).to.be.true;
-      expect(this.stubUploadPhoto.calledWith({
-        photo: './outputs/out_id.jpg',
-        caption: '#ok @username'
+      expect(this.stubUploadPhoto.calledWith('media/upload', {
+        media: './outputs/out_id.jpg',
+      }) ).to.be.true;
+
+      expect(this.stubUploadPhotoTweet.calledOnce).to.be.true;
+      expect(this.stubUploadPhotoTweet.calledWith('statuses/update', {
+        status: 'ok @username',
+        media_ids: 'media_id_string'
       }) ).to.be.true;
 
     });
 
-    it('Should throw is upload failed', async () => {
+    it('Should throw is upload file failed', async () => {
+
+      this.stubUploadPhoto.resolves({});
+
+      await expect(this.socialConnector.publish('./outputs/out_id.jpg', 'username') ).to.be.rejectedWith(Error, 'cannot_publish_media');
+
+    });
+
+    it('Should throw is tweet failed', async () => {
 
       this.stubUploadPhoto.resolves({
-        status: 'failed'
+        media_id_string: 'media_id_string'
       });
+      this.stubUploadPhotoTweet.resolves({});
 
       await expect(this.socialConnector.publish('./outputs/out_id.jpg', 'username') ).to.be.rejectedWith(Error, 'cannot_publish');
+
+    });
+
+  });
+
+  describe.skip('Real calls', () => {
+
+    it.skip('Should return followers in deterministic or after unfollow', async () => {
+
+      const twitter = new Twitter({
+        consumerKey: Config.socialConnectors.twitter.consumerKey,
+        consumerSecret: Config.socialConnectors.twitter.consumerSecret,
+        accessTokenKey: Config.socialConnectors.twitter.accessTokenKey,
+        accessTokenSecret: Config.socialConnectors.twitter.accessTokenSecret,
+      });
+
+      await twitter.init();
+
+      const followers = await twitter.getNewFollowers();
+      logger.info('followers', { followers });
+
+    });
+
+    it.skip('Should publish', async () => {
+
+      const twitter = new Twitter({
+        consumerKey: Config.socialConnectors.twitter.consumerKey,
+        consumerSecret: Config.socialConnectors.twitter.consumerSecret,
+        accessTokenKey: Config.socialConnectors.twitter.accessTokenKey,
+        accessTokenSecret: Config.socialConnectors.twitter.accessTokenSecret,
+      });
+
+      const photo = fs.readFileSync(`${Config.image.outputsDir}/out.jpg`);
+      await twitter.init();
+
+      const followers = await twitter.publish(photo, 'JulesGoullee');
+      logger.info('followers', { followers });
 
     });
 
