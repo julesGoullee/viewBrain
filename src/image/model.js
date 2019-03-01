@@ -21,7 +21,7 @@ class Model {
     this.scale = scale;
     this.units = units;
     this.depth = depth;
-    this.numFeatures = 4;
+    this.numFeatures = 3;
     this.useBias = false;
     this.model = this.buildModel();
     // this.model.summary();

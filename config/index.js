@@ -10,7 +10,7 @@ module.exports = {
     blackWhite: process.env.BLACK_AND_WHITE === 'true' || false,
     seed: 9202368668,
     // seed: 9062918455,
-    scale: 50,
+    scale: 100,
     batchSize: process.env.IMAGE_BATCH_SIZE || '1000',
     outputsDir: './outputs',
   },
