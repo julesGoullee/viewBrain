@@ -1,10 +1,10 @@
 const path = require('path');
 
-const Config = require(path.join(srcDir, '../config') );
+const MockSocialConnector = require('../../mocks/socialConnector');
 const Utils = require(path.join(srcDir, '/utils') );
 const Db = require(path.join(srcDir, '/app/db') );
 const Handler = require(path.join(srcDir, '/app/handler') );
-const Instagram = require(path.join(srcDir, '/app/instagram') );
+const SocialConnectors = require(path.join(srcDir, '/app/socialConnectors') );
 const Run = require(path.join(srcDir, '/app/index') );
 
 describe('Run', () => {
@@ -26,11 +26,9 @@ describe('Run', () => {
   beforeEach(async () => {
 
     this.sandbox = createSandbox();
-    this.restoreConfigInstagramUsername = Config.instagram.username;
-    this.restoreConfigInstagramPassword = Config.instagram.password;
-    Config.instagram.username = 'username';
-    Config.instagram.password = 'password';
-    this.stubInstagramInit = this.sandbox.stub(Instagram.prototype, 'init').resolves();
+    this.SocialConnector = MockSocialConnector(this.sandbox);
+    this.mockSocialConnector = new this.SocialConnector();
+    this.stubSocialConnectorsInit = this.sandbox.stub(SocialConnectors, 'init').returns(this.mockSocialConnector);
     this.stubDbConnect = this.sandbox.stub(Db, 'connect').resolves();
     this.stubHandleRun = this.sandbox.stub(Handler.prototype, 'run');
     await MockDb.reset();
@@ -39,8 +37,6 @@ describe('Run', () => {
 
   afterEach( () => {
 
-    Config.instagram.username = this.restoreConfigInstagramUsername;
-    Config.instagram.password = this.restoreConfigInstagramPassword;
     this.sandbox.restore();
 
   });
@@ -68,7 +64,7 @@ describe('Run', () => {
     await Utils.wait(500);
 
     expect(this.stubDbConnect.calledOnce).to.be.true;
-    expect(this.stubInstagramInit.calledOnce).to.be.true;
+    expect(this.stubSocialConnectorsInit.calledOnce).to.be.true;
     expect(this.stubHandleRun.callCount).to.be.eq(2);
 
   });

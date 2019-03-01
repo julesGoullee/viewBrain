@@ -3,14 +3,14 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const followerSchema = new Schema({
-  instagramId: { type: String, required: true, unique: true, dropDups: true },
+  socialId: { type: String, required: true, unique: true, dropDups: true },
   username: { type: String, required: true },
   status: { type: String, required: true, enum: [ 'pending', 'uploaded' ], default: 'pending' },
 }, { timestamps: true });
 
-followerSchema.statics.isPresent = async function({ instagramId }){
+followerSchema.statics.isPresent = async function({ socialId }){
 
-  const follower = await this.findOne({ instagramId });
+  const follower = await this.findOne({ socialId });
 
   return Boolean(follower);
 

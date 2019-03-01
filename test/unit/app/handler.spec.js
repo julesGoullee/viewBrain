@@ -1,13 +1,13 @@
 const path = require('path');
 
+const MockSocialConnector = require('../../mocks/socialConnector');
 const Utils = require(path.join(srcDir, '/utils') );
 const Db = require(path.join(srcDir, '/app/db') );
 const Model = require(path.join(srcDir, '/image/model') );
 const Render = require(path.join(srcDir, '/image/render') );
-const Instagram = require(path.join(srcDir, 'app/instagram') );
+const Jpg = require(path.join(srcDir, '/image/jpg') );
 const Handler = require(path.join(srcDir, 'app/handler') );
 const Follower = require(path.join(srcDir, '/app/follower') );
-const Jpg = require(path.join(srcDir, '/image/jpg') );
 
 describe('Handler', () => {
 
@@ -30,19 +30,14 @@ describe('Handler', () => {
 
     this.sandbox = createSandbox();
     await MockDb.reset();
-    this.instagram = new Instagram({
-      username: 'instagram_username',
-      password: 'instagram_password'
-    });
-
-    this.stubInstagramGetNewFollowers = this.sandbox.stub(this.instagram, 'getNewFollowers');
-    this.stubInstagramPublish = this.sandbox.stub(this.instagram, 'publish');
+    this.SocialConnector = MockSocialConnector(this.sandbox);
+    this.mockSocialConnector = new this.SocialConnector();
 
     this.stubModelGenerate = this.sandbox.stub(Model.prototype, 'generate').returns('dataImg');
     this.stubRenderDraw = this.sandbox.stub(Render.prototype, 'draw').resolves();
     this.stubViewerRm = this.sandbox.stub(Jpg.prototype, 'rm').resolves();
     this.stubViewerGetPath = this.sandbox.stub(Jpg.prototype, 'getPath').returns('path');
-    this.handler = new Handler({ instagram: this.instagram });
+    this.handler = new Handler({ socialConnector: this.mockSocialConnector });
 
   });
 
@@ -54,12 +49,12 @@ describe('Handler', () => {
 
   it('Should get render', async () => {
 
-    const res = await Handler.getRender('instagramId');
+    const res = await Handler.getRender('socialId');
     expect(res).to.be.an.instanceOf(Render);
 
     expect(this.stubModelGenerate.calledOnce).to.be.true;
     expect(this.stubRenderDraw.calledOnce).to.be.true;
-    expect(this.stubRenderDraw.calledWith('dataImg', 'instagramId') ).to.be.true;
+    expect(this.stubRenderDraw.calledWith('dataImg', 'socialId') ).to.be.true;
 
   });
 
@@ -68,13 +63,13 @@ describe('Handler', () => {
     const stubHandleOne = this.sandbox.stub(this.handler, 'handleOne');
     const stubWait = this.sandbox.stub(Utils, 'wait');
 
-    this.stubInstagramGetNewFollowers.resolves([
+    this.mockSocialConnector.getNewFollowers.resolves([
       {
-        instagramId: 'instagramId',
+        socialId: 'socialId',
         username: 'username'
       },
       {
-        instagramId: 'instagramId1',
+        socialId: 'socialId1',
         username: 'username1'
       }
     ]);
@@ -86,7 +81,7 @@ describe('Handler', () => {
     expect(stubWait.callCount).to.be.eq(2);
     expect(stubHandleOne.callCount).to.be.eq(2);
     expect(stubHandleOne.args[0][0]).to.be.an.instanceOf(Follower);
-    expect(stubHandleOne.args[0][0].instagramId).to.be.eq('instagramId');
+    expect(stubHandleOne.args[0][0].socialId).to.be.eq('socialId');
     expect(followers.length).to.be.eq(2);
 
   });
@@ -96,7 +91,7 @@ describe('Handler', () => {
     beforeEach( async () => {
 
       this.follower = new Follower({
-        instagramId: 'instagramId',
+        socialId: 'socialId',
         username: 'username'
       });
 
@@ -110,15 +105,15 @@ describe('Handler', () => {
       await this.handler.handleOne(this.follower);
 
       expect(spyGetRender.calledOnce).to.be.true;
-      expect(this.stubInstagramPublish.calledOnce).to.be.true;
+      expect(this.mockSocialConnector.publish.calledOnce).to.be.true;
 
       expect(this.stubViewerGetPath.calledOnce).to.be.true;
-      expect(this.stubViewerGetPath.calledWith(this.follower.instagramId) ).to.be.true;
+      expect(this.stubViewerGetPath.calledWith(this.follower.socialId) ).to.be.true;
 
-      expect(this.stubInstagramPublish.calledWith('path'), this.follower.username).to.be.true;
+      expect(this.mockSocialConnector.publish.calledWith('path'), this.follower.username).to.be.true;
 
       expect(this.stubViewerRm.calledOnce).to.be.true;
-      expect(this.stubViewerRm.calledWith(this.follower.instagramId) ).to.be.true;
+      expect(this.stubViewerRm.calledWith(this.follower.socialId) ).to.be.true;
 
       expect(this.follower.status).to.be.eq('uploaded');
 

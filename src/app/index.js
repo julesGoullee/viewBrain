@@ -1,8 +1,6 @@
-const Config = require('../../config');
-
 const Utils = require('../utils');
 const Db = require('./db');
-const Instagram = require('./instagram');
+const SocialConnectors = require('./socialConnectors');
 const Handler = require('./handler');
 
 async function Run(){
@@ -19,16 +17,12 @@ async function Run(){
 
   try {
 
-    const instagram = new Instagram({
-      username: Config.instagram.username,
-      password: Config.instagram.password
-    });
-
-    const handler = new Handler({ instagram });
+    const socialConnector = SocialConnectors.init();
+    const handler = new Handler({ socialConnectors: socialConnector });
 
     await Promise.all([
       Db.connect(),
-      instagram.init()
+      socialConnector.init()
     ]);
 
     stop = Utils.infiniteLoop(async () => {
