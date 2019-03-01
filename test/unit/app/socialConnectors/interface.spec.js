@@ -19,6 +19,7 @@ describe('SocialConnectors:Interface', () => {
   it('Should throw not implemented method', async () => {
 
     const interface = new Interface();
+    expect(typeof interface.coolTimeAfterPublish).to.be.eq('number');
     await expect(interface.init() ).to.be.rejectedWith(Error, 'not_implemented');
     await expect(interface.getNewFollowers() ).to.be.rejectedWith(Error, 'not_implemented');
     await expect(interface.publish() ).to.be.rejectedWith(Error, 'not_implemented');

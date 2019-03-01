@@ -1,17 +1,4 @@
-const winston = require('winston');
-const timber = require('timber');
-const Config = require('../config');
-// const transport = new timber.transports.HTTPS(Config.timberKey);
-// timber.install(transport);
-
-const logger = new winston.Logger({
-  transports: [
-    new winston.transports.Console({
-      level: 'silly',
-      formatter: Config.env === 'production' ? timber.formatters.Winston : null
-    }),
-  ]
-});
+const logger = require('./logger')();
 
 const Utils = {
 
@@ -20,7 +7,9 @@ const Utils = {
   },
 
   get logger(){
-    return console;
+
+    return logger;
+
   },
 
   wait(ms){

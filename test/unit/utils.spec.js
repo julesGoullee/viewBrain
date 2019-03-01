@@ -1,4 +1,5 @@
 const path = require('path');
+const Winston = require('winston');
 
 const Utils = require(path.join(srcDir, '/utils') );
 
@@ -27,6 +28,12 @@ describe('Utils', () => {
     expect(Utils.isNode() ).to.be.false;
 
     process.title = startTitle;
+
+  });
+
+  it('Should get logger', () => {
+
+    expect(Utils.logger).to.be.an.instanceof(Winston.Logger);
 
   });
 
