@@ -7,20 +7,20 @@ const Follower = require('./follower');
 
 class Handler {
 
-  constructor({ instagram }) {
+  constructor({ socialConnector }) {
 
-    this.instagram = instagram;
+    this.socialConnector = socialConnector;
 
   }
 
-  static async getRender(instagramId){
+  static async getRender(socialId){
 
-    Utils.logger.info(`getRender ${instagramId}`);
+    Utils.logger.info('getRender', { socialId });
 
     const model = new Model({
       inputShape: Handler.inputShape,
       blackWhite: Config.image.blackWhite,
-      seed: parseInt(instagramId, 10),
+      seed: parseInt(socialId, 10),
       scale: Config.image.scale,
       batchSize: parseInt(Config.image.batchSize, 10)
     });
@@ -32,35 +32,34 @@ class Handler {
     });
 
     const dataImg = model.generate();
-    await render.draw(dataImg, instagramId);
-    Utils.logger.info(`getRender finish ${instagramId}`);
-
+    await render.draw(dataImg, socialId);
+    Utils.logger.info('getRender finish', { socialId });
     return render;
 
   }
 
   async handleOne(follower){
 
-    Utils.logger.info(`handleOne start ${follower.instagramId}`);
+    Utils.logger.info('handleOne start', { socialId: follower.socialId });
 
-    const render = await Handler.getRender(follower.instagramId);
+    const render = await Handler.getRender(follower.socialId);
 
-    await this.instagram.publish(render.viewer.getPath(follower.instagramId), follower.username);
+    await this.socialConnector.publish(render.viewer.getPath(follower.socialId), follower.username);
 
-    await render.viewer.rm(follower.instagramId);
+    await render.viewer.rm(follower.socialId);
 
     follower.status = 'uploaded';
     await follower.save();
 
-    Utils.logger.info(`handleOne finish ${follower.instagramId}`);
+    Utils.logger.info('handleOne finish', { socialId: follower.socialId });
 
   }
 
   async run(){
 
-    Utils.logger.info(`Run`);
+    Utils.logger.info('Run');
 
-    const newFollowers = await this.instagram.getNewFollowers();
+    const newFollowers = await this.socialConnector.getNewFollowers();
 
     for(let i = 0; i < newFollowers.length; i++){
 
@@ -68,11 +67,11 @@ class Handler {
       await newFollower.save();
 
       await this.handleOne(newFollower);
-      await Utils.wait(this.instagram.coolTimeAfterPublish);
+      await Utils.wait(this.socialConnector.coolTimeAfterPublish);
 
     }
 
-    Utils.logger.info(`Run finish with ${newFollowers.length} new`);
+    Utils.logger.info('Run finish', { nbFollowers: newFollowers.length });
 
   }
 

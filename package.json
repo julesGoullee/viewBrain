@@ -39,13 +39,19 @@
   "dependencies": {
     "@tensorflow/tfjs": "^0.13.5",
     "@tensorflow/tfjs-node": "^0.1.21",
+    "bluebird": "^3.5.1",
     "bottleneck": "^2.13.0",
+    "crypto-random-int": "^1.0.1",
     "dotenv": "^6.1.0",
     "instagram-web-api": "^2.0.0",
     "jpeg-js": "^0.3.4",
     "mongodb": "^3.1.10",
     "mongoose": "^5.3.13",
-    "tough-cookie-filestore2": "^1.0.0"
+    "random-seed": "^0.3.0",
+    "timber": "^3.1.3",
+    "tough-cookie-filestore2": "^1.0.0",
+    "twitter": "^1.7.1",
+    "winston": "^2.4.4"
   },
   "devDependencies": {
     "babel-core": "^6.26.3",

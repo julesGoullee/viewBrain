@@ -9,3 +9,4 @@ data
 .cache
 .nyc_output
 coverage
+outputs/

@@ -26,7 +26,7 @@ describe('Follower', () => {
     await MockDb.reset();
 
     this.follower = new Follower({
-      instagramId: 'instagramId',
+      socialId: 'socialId',
       username: 'username'
     });
 
@@ -42,8 +42,8 @@ describe('Follower', () => {
 
     await this.follower.save();
 
-    const follower = await Follower.findOne({ instagramId: 'instagramId' });
-    expect(follower.instagramId).to.be.eq('instagramId');
+    const follower = await Follower.findOne({ socialId: 'socialId' });
+    expect(follower.socialId).to.be.eq('socialId');
     expect(follower.username).to.be.eq('username');
     expect(follower.status).to.be.eq('pending');
 
@@ -52,14 +52,14 @@ describe('Follower', () => {
   it('Should find present follower', async () => {
 
     await this.follower.save();
-    const followerPresent = await Follower.isPresent({ instagramId: 'instagramId' });
+    const followerPresent = await Follower.isPresent({ socialId: 'socialId' });
     expect(followerPresent).to.be.true;
 
   });
 
   it('Should not find missing follower', async () => {
 
-    const followerPresent = await Follower.isPresent({ instagramId: 'instagramId' });
+    const followerPresent = await Follower.isPresent({ socialId: 'socialId' });
     expect(followerPresent).to.be.false;
 
   });
