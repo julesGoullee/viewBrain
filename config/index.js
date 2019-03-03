@@ -47,5 +47,17 @@ module.exports = {
     dbName: process.env.MONGO_DB_NAME || 'socialConnector-dev'
   },
 
-  timberKey: process.env.TIMBER_KEY || null
+  timberKey: process.env.TIMBER_KEY || null,
+
+  tags: [
+    'abstractart',
+    'art',
+    'creative',
+    'creativecoding',
+    'generative',
+    'generativeart',
+    'digitalart',
+    'codeart'
+  ]
+
 };

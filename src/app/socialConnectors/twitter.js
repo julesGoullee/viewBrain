@@ -6,7 +6,7 @@ const Bottleneck = require('bottleneck');
 const Config = require('../../../config');
 const { logger } = require('../../utils');
 const Interface = require('./interface');
-const Follower = require('../follower');
+const Follower = require('../models/follower');
 
 class Twitter extends Interface {
 

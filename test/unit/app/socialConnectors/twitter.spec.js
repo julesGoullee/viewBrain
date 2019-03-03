@@ -5,8 +5,8 @@ const fs = require('fs');
 const Config = require(path.join(srcDir, '../config') );
 const { logger } = require(path.join(srcDir, '/utils') );
 
-const Db = require(path.join(srcDir, '/app/db') );
-const Follower = require(path.join(srcDir, '/app/follower') );
+const Db = require(path.join(srcDir, '/app/models/db') );
+const Follower = require(path.join(srcDir, '/app/models/follower') );
 const Twitter = require(path.join(srcDir, '/app/socialConnectors/twitter') );
 
 describe('SocialConnectors:Twitter', () => {

@@ -4,8 +4,8 @@ const Insta = require('instagram-web-api');
 const Config = require(path.join(srcDir, '../config') );
 const { logger } = require(path.join(srcDir, '/utils') );
 
-const Db = require(path.join(srcDir, '/app/db') );
-const Follower = require(path.join(srcDir, '/app/follower') );
+const Db = require(path.join(srcDir, '/app/models/db') );
+const Follower = require(path.join(srcDir, '/app/models/follower') );
 const Instagram = require(path.join(srcDir, '/app/socialConnectors/instagram') );
 
 describe('SocialConnectors:Instagram', () => {

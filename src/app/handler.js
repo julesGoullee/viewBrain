@@ -3,7 +3,7 @@ const Config = require('../../config');
 const Utils = require('../utils');
 const Model = require('../image/model');
 const Render = require('../image/render');
-const Follower = require('./follower');
+const Follower = require('./models/follower');
 
 class Handler {
 

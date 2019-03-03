@@ -1,5 +1,5 @@
 const Utils = require('../utils');
-const Db = require('./db');
+const Db = require('./models/db');
 const SocialConnectors = require('./socialConnectors');
 const Handler = require('./handler');
 
