@@ -18,7 +18,7 @@ async function Run(){
   try {
 
     const socialConnector = SocialConnectors.init();
-    const handler = new Handler({ socialConnectors: socialConnector });
+    const handler = new Handler({ socialConnector });
 
     await Promise.all([
       Db.connect(),
