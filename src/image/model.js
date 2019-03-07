@@ -116,13 +116,23 @@ class Model {
     for(let i = 0; i < this.inputShape[1]; i++){
 
       // const line = [];
+      const ni = 2*(i/this.inputShape[1]  - 0.5);
 
       for(let j = 0; j < this.inputShape[0]; j++){
 
+        const nj = 2*(j/this.inputShape[0]  - 0.5);
+        const cj = nj * Math.abs(Math.cos(ni * Math.PI / 2) );
+        const jj = (cj / 2 + 0.5) * this.inputShape[0];
+
+        if(i % 100 === 0 && j % 100 === 0) {
+          console.log(ni)
+          console.log(cj)
+          console.log(cj)
+        }
         features.push([
-          j - this.inputShape[1] / 2,
-          i - this.inputShape[0] / 2,
-          Math.sqrt( i * i + j * j),
+          jj - this.inputShape[0] / 2,
+          i - this.inputShape[1] / 2,
+          Math.sqrt( jj * jj + i * i),
           z
         ]);
 
