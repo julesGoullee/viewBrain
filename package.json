@@ -45,6 +45,7 @@
     "dotenv": "^6.1.0",
     "instagram-web-api": "^2.0.0",
     "jpeg-js": "^0.3.4",
+    "moment": "^2.24.0",
     "mongodb": "^3.1.10",
     "mongoose": "^5.3.13",
     "random-seed": "^0.3.0",
