@@ -2,7 +2,7 @@ const path = require('path');
 
 const MockSocialConnector = require('../../mocks/socialConnector');
 const Utils = require(path.join(srcDir, '/utils') );
-const Db = require(path.join(srcDir, '/app/db') );
+const Db = require(path.join(srcDir, '/app/models/db') );
 const Handler = require(path.join(srcDir, '/app/handler') );
 const SocialConnectors = require(path.join(srcDir, '/app/socialConnectors') );
 const Run = require(path.join(srcDir, '/app/index') );

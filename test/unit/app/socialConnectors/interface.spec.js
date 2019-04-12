@@ -23,6 +23,9 @@ describe('SocialConnectors:Interface', () => {
     await expect(interface.init() ).to.be.rejectedWith(Error, 'not_implemented');
     await expect(interface.getNewFollowers() ).to.be.rejectedWith(Error, 'not_implemented');
     await expect(interface.publish() ).to.be.rejectedWith(Error, 'not_implemented');
+    expect(() => interface.onNewPost() ).to.be.throws(Error, 'not_implemented');
+    await expect(interface.follow() ).to.be.rejectedWith(Error, 'not_implemented');
+    await expect(interface.unfollow() ).to.be.rejectedWith(Error, 'not_implemented');
 
   });
 

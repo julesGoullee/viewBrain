@@ -3,7 +3,7 @@ const Config = require('../../config');
 const Utils = require('../utils');
 const Model = require('../image/model');
 const Render = require('../image/render');
-const Follower = require('./follower');
+const Follower = require('./models/follower');
 
 class Handler {
 
@@ -57,7 +57,7 @@ class Handler {
 
   async run(){
 
-    Utils.logger.info('Run');
+    Utils.logger.info('Handler start');
 
     const newFollowers = await this.socialConnector.getNewFollowers();
 
@@ -71,7 +71,7 @@ class Handler {
 
     }
 
-    Utils.logger.info('Run finish', { nbFollowers: newFollowers.length });
+    Utils.logger.info('Handler finish', { nbFollowers: newFollowers.length });
 
   }
 

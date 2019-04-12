@@ -1,7 +1,7 @@
 const path = require('path');
 
-const Db = require(path.join(srcDir, '/app/db') );
-const Follower = require(path.join(srcDir, '/app/follower') );
+const Db = require(path.join(srcDir, '/app/models/db') );
+const Follower = require(path.join(srcDir, '/app/models/follower') );
 
 describe('Follower', () => {
 

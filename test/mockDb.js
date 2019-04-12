@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const MongoMemoryServer = require('mongodb-memory-server');
 
 const config = require('../config');
-const Db = require(path.join(srcDir, '/app/db') );
+const Db = require(path.join(srcDir, '/app/models/db') );
 
 const Mock = {
 

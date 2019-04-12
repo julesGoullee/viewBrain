@@ -1,5 +1,5 @@
 const Utils = require('../utils');
-const Db = require('./db');
+const Db = require('./models/db');
 const SocialConnectors = require('./socialConnectors');
 const Handler = require('./handler');
 
@@ -18,7 +18,7 @@ async function Run(){
   try {
 
     const socialConnector = SocialConnectors.init();
-    const handler = new Handler({ socialConnectors: socialConnector });
+    const handler = new Handler({ socialConnector });
 
     await Promise.all([
       Db.connect(),
