@@ -158,7 +158,7 @@ describe('SocialConnectors:Twitter', () => {
       this.stubStream = this.sandbox.stub(this.twitter.client, 'stream');
       this.stubFollow = this.sandbox.stub(this.twitter, 'limitedFollow');
       this.stubUnfollow = this.sandbox.stub(this.twitter, 'limitedUnfollow');
-
+      this.stubFsRead = this.sandbox.stub(fs, 'readFileSync');
       await this.twitter.init();
 
     });
@@ -502,6 +502,7 @@ describe('SocialConnectors:Twitter', () => {
 
     it('Should publish', async () => {
 
+      this.stubFsRead.returns('out_id_data_png');
       this.stubUploadPhoto.resolves({
         media_id_string: 'media_id_string'
       });
@@ -513,9 +514,11 @@ describe('SocialConnectors:Twitter', () => {
       const res = await this.twitter.publish('./outputs/out_id.jpg', 'username');
       expect(res).to.be.true;
 
+      expect(this.stubFsRead.calledOnce).to.be.true;
+      expect(this.stubFsRead.calledWith('./outputs/out_id.jpg') ).to.be.true;
       expect(this.stubUploadPhoto.calledOnce).to.be.true;
       expect(this.stubUploadPhoto.calledWith('media/upload', {
-        media: './outputs/out_id.jpg',
+        media: 'out_id_data_png',
       }) ).to.be.true;
 
       expect(this.stubUploadPhotoTweet.calledOnce).to.be.true;
