@@ -1,16 +1,18 @@
+const Config = require('../../config');
 const Utils = require('../utils');
 const Db = require('./models/db');
 const SocialConnectors = require('./socialConnectors');
 const Handler = require('./handler');
+const TagWatcher = require('./tagWatcher');
 
 async function Run(){
 
-  let stop = null;
+  const stoppers = {};
 
   const onError = async (error) => {
 
     Utils.logger.error(error);
-    stop && stop();
+    Object.keys(stoppers).forEach(stopper => stoppers[stopper]() );
     await Db.disconnect();
 
   };
@@ -25,13 +27,26 @@ async function Run(){
       socialConnector.init()
     ]);
 
-    stop = Utils.infiniteLoop(async () => {
+    stoppers.handler = Utils.infiniteLoop(async () => {
 
       await handler.run();
 
     }, onError);
 
-    return stop;
+    if(Config.tagWatcher.enable){
+
+      const tagWatcher = new TagWatcher({ socialConnector, tags: Config.tagWatcher.tags });
+
+      stoppers.tagWatcher = Utils.infiniteLoop(async () => {
+
+        await tagWatcher.run();
+
+      }, onError);
+
+    }
+
+
+    return stoppers;
 
   } catch (error) {
 
