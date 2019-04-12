@@ -25,7 +25,8 @@ class Jpg {
       height: this.height
     };
 
-    const stream  = fs.createWriteStream(`${this.baseDir}/out${id ? `_${id}` : ''}.jpg`);
+    const path = `${this.baseDir}/out${id ? `_${id}` : ''}.jpg`;
+    const stream  = fs.createWriteStream(path);
 
     const encoded = Jpeg.encode(rawImageData, 100);
     stream.write(encoded.data);
@@ -34,7 +35,7 @@ class Jpg {
     return new Promise(resolve => {
 
       stream.on('finish', () => {
-        logger.info('Written out!');
+        logger.info('Written file', { path });
         resolve();
       });
 
@@ -50,15 +51,19 @@ class Jpg {
 
   rm(id){
 
+    const path = `${this.baseDir}/out${id ? `_${id}` : ''}.jpg`;
+
     return new Promise( (resolve, reject) => {
 
-      fs.unlink(`${this.baseDir}/out${id ? `_${id}` : ''}.jpg`, (error) => {
+      fs.unlink(path, (error) => {
 
         if(error){
 
           reject(error);
 
         }
+
+        logger.info('Remove file', { path });
 
         resolve();
 

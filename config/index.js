@@ -35,13 +35,13 @@ module.exports = {
       accessTokenKey: process.env.SOCIAL_CONNECTOR_TWITTER_ACCESS_TOKEN_KEY,
       accessTokenSecret: process.env.SOCIAL_CONNECTOR_TWITTER_ACCESS_TOKEN_SECRET,
       coolTimeGetFollower: process.env.SOCIAL_CONNECTOR_TWITTER_COOL_TIME_GET_FOLLOWER || '15',
-      coolTimeRefreshGetFollower: process.env.SOCIAL_CONNECTOR_TWITTER_COOL_TIME_REFRESH_GET_FOLLOWER || '15',
+      coolTimeRefreshGetFollower: parseInt(process.env.SOCIAL_CONNECTOR_TWITTER_COOL_TIME_REFRESH_GET_FOLLOWER || 15 * 60 * 1000, 10),
       coolTimeUploadPhoto: process.env.SOCIAL_CONNECTOR_TWITTER_COOL_TIME_UPLOAD_PHOTO || '300',
-      coolTimeRefreshUploadPhoto: process.env.SOCIAL_CONNECTOR_TWITTER_COOL_TIME_REFRESH_UPLOAD_PHOTO || '86400',
+      coolTimeRefreshUploadPhoto: parseInt(process.env.SOCIAL_CONNECTOR_TWITTER_COOL_TIME_REFRESH_UPLOAD_PHOTO || 86400 * 1000, 10),
       coolTimeFollow: process.env.SOCIAL_CONNECTOR_TWITTER_COOL_TIME_FOLLOW || '41',
-      coolTimeRefreshFollow: process.env.SOCIAL_CONNECTOR_TWITTER_COOL_TIME_REFRESH_FOLLOW || '3600',
+      coolTimeRefreshFollow: parseInt(process.env.SOCIAL_CONNECTOR_TWITTER_COOL_TIME_REFRESH_FOLLOW || 3600 * 1000, 10),
       coolTimeUnfollow: process.env.SOCIAL_CONNECTOR_TWITTER_COOL_TIME_UNFOLLOW || '15',
-      coolTimeRefreshUnfollow: process.env.SOCIAL_CONNECTOR_TWITTER_COOL_TIME_UNFOLLOW || '15',
+      coolTimeRefreshUnfollow: parseInt(process.env.SOCIAL_CONNECTOR_TWITTER_COOL_TIME_UNFOLLOW|| 15 * 60 * 1000, 10),
 
     }
 
