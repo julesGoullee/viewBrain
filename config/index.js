@@ -8,7 +8,7 @@ module.exports = {
     height: process.env.IMAGE_HEIGHT || '200',
     width: process.env.IMAGE_WIDTH || '200',
     blackWhite: process.env.BLACK_AND_WHITE === 'true' || false,
-    seed: 9202368668,
+    seed: 1068441726,
     // seed: 9062918455,
     scale: 100,
     batchSize: process.env.IMAGE_BATCH_SIZE || '1000',
@@ -47,15 +47,9 @@ module.exports = {
 
   },
 
-  mongo: {
-    uri: process.env.MONGO_URI || 'mongodb://localhost:27017',
-    dbName: process.env.MONGO_DB_NAME || 'socialConnector-dev'
-  },
-
-  timberKey: process.env.TIMBER_KEY || null,
-
   tagWatcher: {
 
+    enable: process.env.TAG_WATCHER_ENABLE === 'true' || false,
     tags: [
       'abstractart',
       'art',
@@ -71,6 +65,13 @@ module.exports = {
     timerUnfollow: process.env.TAG_WATCHER_TIMER_UNFOLLOW || '2', // in day
     userByTag: process.env.TAG_WATCHER_USER_BY_TAG || '5',
 
-  }
+  },
+
+  mongo: {
+    uri: process.env.MONGO_URI || 'mongodb://localhost:27017',
+    dbName: process.env.MONGO_DB_NAME || 'socialConnector-dev'
+  },
+
+  timberKey: process.env.TIMBER_KEY || null,
 
 };
