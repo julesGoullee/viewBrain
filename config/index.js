@@ -38,6 +38,11 @@ module.exports = {
       coolTimeRefreshGetFollower: process.env.SOCIAL_CONNECTOR_TWITTER_COOL_TIME_REFRESH_GET_FOLLOWER || '15',
       coolTimeUploadPhoto: process.env.SOCIAL_CONNECTOR_TWITTER_COOL_TIME_UPLOAD_PHOTO || '300',
       coolTimeRefreshUploadPhoto: process.env.SOCIAL_CONNECTOR_TWITTER_COOL_TIME_REFRESH_UPLOAD_PHOTO || '86400',
+      coolTimeFollow: process.env.SOCIAL_CONNECTOR_TWITTER_COOL_TIME_FOLLOW || '41',
+      coolTimeRefreshFollow: process.env.SOCIAL_CONNECTOR_TWITTER_COOL_TIME_REFRESH_FOLLOW || '3600',
+      coolTimeUnfollow: process.env.SOCIAL_CONNECTOR_TWITTER_COOL_TIME_UNFOLLOW || '15',
+      coolTimeRefreshUnfollow: process.env.SOCIAL_CONNECTOR_TWITTER_COOL_TIME_UNFOLLOW || '15',
+
     }
 
   },
@@ -47,5 +52,25 @@ module.exports = {
     dbName: process.env.MONGO_DB_NAME || 'socialConnector-dev'
   },
 
-  timberKey: process.env.TIMBER_KEY || null
+  timberKey: process.env.TIMBER_KEY || null,
+
+  tagWatcher: {
+
+    tags: [
+      'abstractart',
+      'art',
+      'creative',
+      'creativecoding',
+      'generative',
+      'generativeart',
+      'digitalart',
+      'codeart'
+    ],
+
+    intervalFollow: process.env.TAG_WATCHER_INTERVAL_FOLLOW || '3600000', // 1 hour
+    timerUnfollow: process.env.TAG_WATCHER_TIMER_UNFOLLOW || '2', // in day
+    userByTag: process.env.TAG_WATCHER_USER_BY_TAG || '5',
+
+  }
+
 };
