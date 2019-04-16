@@ -11,6 +11,7 @@ async function Run(){
 
   const onError = async (error) => {
 
+    /* istanbul ignore else */
     if(error){
 
       Utils.logger.error(error);
@@ -45,7 +46,7 @@ async function Run(){
 
     if(Config.tagWatcher.enable){
 
-      const tagWatcher = new TagWatcher({ socialConnector, tags: Config.tagWatcher.tags });
+      const tagWatcher = new TagWatcher({ socialConnector });
 
       stoppers.tagWatcher = Utils.infiniteLoop(async () => {
 

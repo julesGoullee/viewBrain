@@ -6,11 +6,10 @@ const Following = require('./models/following');
 
 class TagWatcher {
 
-  constructor({ socialConnector, tags }){
+  constructor({ socialConnector }){
 
-    this.tags = tags;
     this.socialConnector = socialConnector;
-    this.usersByTag = this.tags.reduce((acc, tag) => {
+    this.usersByTag = Config.tagWatcher.tags.reduce((acc, tag) => {
 
       acc[tag] = [];
       return acc;
@@ -31,13 +30,13 @@ class TagWatcher {
 
     Utils.logger.info('TagWatcher start', { service: 'tagWatcher' });
 
-    this.tags.forEach( (tag) => {
+    Config.tagWatcher.tags.forEach( (tag) => {
 
       this.usersByTag[tag] = [];
 
     });
 
-    this.stopper = this.socialConnector.onNewPost(this.tags, this.onNewPost);
+    this.stopper = this.socialConnector.onNewPost(this.onNewPost);
 
     await Utils.wait(Config.tagWatcher.intervalFollow);
 
@@ -47,6 +46,11 @@ class TagWatcher {
     await this.unfollowOldUser();
 
     this.stopper = null;
+    Config.tagWatcher.tags.forEach( (tag) => {
+
+      this.usersByTag[tag] = [];
+
+    });
 
     Utils.logger.info('TagWatcher finish', { service: 'tagWatcher' });
 
@@ -60,11 +64,11 @@ class TagWatcher {
 
   async followBestUsers(){
 
-    const stats = this.tags.map(tag => ({ tag, count: this.usersByTag[tag].length }) );
+    const stats = Config.tagWatcher.tags.map(tag => ({ tag, count: this.usersByTag[tag].length }) );
 
     Utils.logger.info(' FollowBestUsers', { service: 'tagWatcher', stats });
 
-    const users = this.tags.map(tag => {
+    const users = Config.tagWatcher.tags.map(tag => {
 
       return TagWatcher.sortBestUsers(this.usersByTag[tag]).slice(0, Config.tagWatcher.userByTag);
 
