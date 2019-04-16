@@ -11,7 +11,17 @@ async function Run(){
 
   const onError = async (error) => {
 
-    Utils.logger.error(error);
+    if(error){
+
+      Utils.logger.error(error);
+
+    } else {
+
+      // eslint-disable-next-line
+      console.log(error);
+
+    }
+
     Object.keys(stoppers).forEach(stopper => stoppers[stopper]() );
     await Db.disconnect();
 

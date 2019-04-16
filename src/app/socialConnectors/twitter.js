@@ -163,16 +163,38 @@ class Twitter extends Interface {
 
   }
 
-  onNewPost(tag, handler){
+  onNewPost(tags, handler){
 
     assert(this.initilized, 'uninitialized_account');
 
-    const stream = this.client.stream('statuses/filter', { track: tag });
+    const track = tags.reduce( (acc, tag, i) => {
+
+      if(i === 0){
+
+        return `#${tag}`;
+
+      }
+
+      return `${acc},#${tag}`;
+
+    }, '');
+
+    const stream = this.client.stream('statuses/filter', { track });
 
     stream.on('data', (event) => {
 
+      if(!event.extended_tweet || !event.extended_tweet.full_text){
+        return;
+      }
+
+      const tag = tags.find(tag => event.extended_tweet.full_text.includes(tag) );
+
+      if(!tag){
+        return;
+      }
+
       handler({
-        content: event.text,
+        tag,
         user: {
           socialId: event.user.id,
           username: event.user.screen_name
@@ -183,7 +205,7 @@ class Twitter extends Interface {
 
     stream.on('error', (error) => {
 
-      logger.error('error on new post', { error });
+      logger.error('error on new post', { tags, error: error.message });
 
     });
 

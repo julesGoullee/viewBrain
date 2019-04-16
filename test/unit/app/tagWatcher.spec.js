@@ -47,7 +47,7 @@ describe('Tag watcher', () => {
     expect(this.tagWatcher.tags).to.be.deep.eq(this.tags);
     expect(this.tagWatcher.socialConnector).to.be.eq(this.mockSocialConnector);
     expect(this.tagWatcher.usersByTag).to.be.deep.eq({ tag1: [], tag2: [] });
-    expect(this.tagWatcher.stoppers).to.be.deep.eq([]);
+    expect(this.tagWatcher.stopper).to.be.null;
 
   });
 
@@ -97,12 +97,14 @@ describe('Tag watcher', () => {
     const promiseEnd = this.tagWatcher.run();
 
     expect(stubLogger.calledOnce).to.be.true;
-    expect(stubLogger.calledWith('Run', { service: 'tagWatcher' }) ).to.be.true;
-    expect(this.tagWatcher.stoppers.length).to.be.eq(this.tags.length);
-    expect(this.mockSocialConnector.onNewPost.callCount).to.be.eq(this.tags.length);
+    expect(stubLogger.calledWith('TagWatcher start', { service: 'tagWatcher' }) ).to.be.true;
+    expect(this.tagWatcher.stopper).to.be.eq(stubStopper);
+    expect(this.mockSocialConnector.onNewPost.calledOnce).to.be.true;
+
+    expect(this.mockSocialConnector.onNewPost.calledWith(this.tags, this.tagWatcher.onNewPost) ).to.be.true;
+
     this.tags.forEach(tag =>{
 
-      expect(this.mockSocialConnector.onNewPost.calledWith(tag, this.tagWatcher.onNewPost) ).to.be.true;
       this.tagWatcher.tags[tag] = ['post1', 'post2'];
 
     });
@@ -111,19 +113,19 @@ describe('Tag watcher', () => {
 
     await promiseEnd;
 
-    expect(stubStopper.callCount).to.be.eq(this.tags.length);
+    expect(stubStopper.calledOnce).to.be.true;
     expect(stubFollowBestUser.calledOnce).to.be.true;
     expect(stubUnfollowOldUser.calledOnce).to.be.true;
-    expect(this.tagWatcher.stoppers.length).to.be.eq(0);
+    expect(this.tagWatcher.stopper).to.be.null;
     expect(this.tagWatcher.usersByTag).to.be.deep.eq({ tag1: [], tag2: [] });
-    expect(stubLogger.calledWith('Run finish', { service: 'tagWatcher' }) ).to.be.true;
+    expect(stubLogger.calledWith('TagWatcher finish', { service: 'tagWatcher' }) ).to.be.true;
     Config.tagWatcher.intervalFollow = '3600000';
 
   });
 
   it('Should handle new post', () => {
 
-    this.tagWatcher.onNewPost('tag1', { user: 'user' });
+    this.tagWatcher.onNewPost({ tag: 'tag1', user: 'user' });
     expect(this.tagWatcher.usersByTag.tag1.length).to.be.eq(1);
     expect(this.tagWatcher.usersByTag.tag1[0]).to.be.eq('user');
 

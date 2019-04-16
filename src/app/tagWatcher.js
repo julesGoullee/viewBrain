@@ -17,8 +17,8 @@ class TagWatcher {
 
     }, {});
 
-    this.stoppers = [];
-
+    this.stopper = null;
+    this.onNewPost = this.onNewPost.bind(this)
   }
 
   static sortBestUsers(users){
@@ -29,35 +29,40 @@ class TagWatcher {
 
   async run(){
 
-    Utils.logger.info('Run', { service: 'tagWatcher' });
+    Utils.logger.info('TagWatcher start', { service: 'tagWatcher' });
 
-    this.stoppers = this.tags.map(tag => this.socialConnector.onNewPost(tag, this.onNewPost) );
-
-    await Utils.wait(Config.tagWatcher.intervalFollow);
-
-    this.stoppers.forEach(stopper => stopper());
-
-    await this.followBestUsers();
-    await this.unfollowOldUser();
-
-    this.stoppers = [];
     this.tags.forEach( (tag) => {
 
       this.usersByTag[tag] = [];
 
     });
 
-    Utils.logger.info('Run finish', { service: 'tagWatcher' });
+    this.stopper = this.socialConnector.onNewPost(this.tags, this.onNewPost);
+
+    await Utils.wait(Config.tagWatcher.intervalFollow);
+
+    this.stopper();
+
+    await this.followBestUsers();
+    await this.unfollowOldUser();
+
+    this.stopper = null;
+
+    Utils.logger.info('TagWatcher finish', { service: 'tagWatcher' });
 
   }
 
-  onNewPost(tag, post){
+  onNewPost({ tag, user }){
 
-    this.usersByTag[tag].push(post.user);
+    this.usersByTag[tag].push(user);
 
   }
 
   async followBestUsers(){
+
+    const stats = this.tags.map(tag => ({ tag, count: this.usersByTag[tag].length }) );
+
+    Utils.logger.info(' FollowBestUsers', { service: 'tagWatcher', stats });
 
     const users = this.tags.map(tag => {
 

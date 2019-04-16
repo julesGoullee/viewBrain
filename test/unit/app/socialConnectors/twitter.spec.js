@@ -559,10 +559,10 @@ describe('SocialConnectors:Twitter', () => {
 
       this.stubStream.returns(stubStream);
 
-      const stop = this.twitter.onNewPost('tag', stubHandler);
+      const stop = this.twitter.onNewPost(['tag1', 'tag2'], stubHandler);
 
       expect(this.stubStream.calledOnce).to.be.true;
-      expect(this.stubStream.calledWith('statuses/filter', { track: 'tag' }) ).to.be.true;
+      expect(this.stubStream.calledWith('statuses/filter', { track: '#tag1,#tag2' }) ).to.be.true;
 
       expect(stubStream.on.callCount).to.be.eq(2);
       expect(stubStream.on.args[0][0]).to.be.eq('data');
@@ -570,7 +570,9 @@ describe('SocialConnectors:Twitter', () => {
       expect(stubHandler.callCount).to.be.eq(0);
 
       stubStream.on.args[0][1]({
-        text: 'text',
+        extended_tweet: {
+          full_text: '#tag2 text'
+        },
         user: {
           id: 'id',
           screen_name: 'screen_name'
@@ -579,11 +581,11 @@ describe('SocialConnectors:Twitter', () => {
 
       expect(stubHandler.calledOnce).to.be.true;
       expect(stubHandler.calledWith({
-        content: 'text',
         user: {
           socialId: 'id',
           username: 'screen_name'
-        }
+        },
+        tag: 'tag2'
       }) ).to.be.true;
 
       expect(stubLogger.callCount).to.be.eq(0);
@@ -597,6 +599,51 @@ describe('SocialConnectors:Twitter', () => {
       stop();
 
       expect(stubStream.destroy.calledOnce).to.be.true;
+
+    });
+
+    it('Should stream catch no content', async () => {
+
+      const stubStream = {
+        on: this.sandbox.stub(),
+        destroy: this.sandbox.stub()
+      };
+      const stubHandler = this.sandbox.stub();
+      const stubLogger = this.sandbox.stub(logger, 'error');
+
+      this.stubStream.returns(stubStream);
+
+      const stop = this.twitter.onNewPost(['tag1', 'tag2'], stubHandler);
+
+      stubStream.on.args[0][1]({
+        extended_tweet: {},
+        user: {
+          id: 'id',
+          screen_name: 'screen_name'
+        }
+      });
+      expect(stubHandler.callCount).to.be.eq(0);
+      stubStream.on.args[0][1]({
+        user: {
+          id: 'id',
+          screen_name: 'screen_name'
+        }
+      });
+      expect(stubHandler.callCount).to.be.eq(0);
+
+      stubStream.on.args[0][1]({
+        extended_tweet: {
+          full_text: '#tag3 text'
+        },
+        user: {
+          id: 'id',
+          screen_name: 'screen_name'
+        }
+      });
+      expect(stubHandler.callCount).to.be.eq(0);
+      expect(stubLogger.callCount).to.be.eq(0);
+
+      stop();
 
     });
 
