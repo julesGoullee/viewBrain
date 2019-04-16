@@ -9,6 +9,9 @@ module.exports = (sandbox) => {
     'init',
     'getNewFollowers',
     'publish',
+    'onNewPost',
+    'follow',
+    'unfollow',
   ];
 
   class SocialConnector extends Interface {}

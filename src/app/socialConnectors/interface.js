@@ -24,6 +24,24 @@ class SocialConnector {
 
   }
 
+  onNewPost(tag, handler){ // eslint-disable-line no-unused-vars
+
+    throw new Error('not_implemented');
+
+  }
+
+  async follow(username){ // eslint-disable-line no-unused-vars
+
+    throw new Error('not_implemented');
+
+  }
+
+  async unfollow(username){ // eslint-disable-line no-unused-vars
+
+    throw new Error('not_implemented');
+
+  }
+
 }
 
 module.exports = SocialConnector;

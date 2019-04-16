@@ -2,12 +2,12 @@ const path = require('path');
 
 const MockSocialConnector = require('../../mocks/socialConnector');
 const Utils = require(path.join(srcDir, '/utils') );
-const Db = require(path.join(srcDir, '/app/db') );
+const Db = require(path.join(srcDir, '/app/models/db') );
 const Model = require(path.join(srcDir, '/image/model') );
 const Render = require(path.join(srcDir, '/image/render') );
 const Jpg = require(path.join(srcDir, '/image/jpg') );
 const Handler = require(path.join(srcDir, 'app/handler') );
-const Follower = require(path.join(srcDir, '/app/follower') );
+const Follower = require(path.join(srcDir, '/app/models/follower') );
 
 describe('Handler', () => {
 

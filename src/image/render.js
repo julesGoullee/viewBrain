@@ -34,7 +34,7 @@ class Render {
 
   }
 
-  drawRandom(){
+    drawRandom(){
 
     const data = [];
 
@@ -47,7 +47,7 @@ class Render {
           random, // red
           random, // green
           random, // blue
-          255 // alpha
+          // 255 // alpha
         );
 
       } else {
@@ -56,14 +56,14 @@ class Render {
           Render._randomInt(0, 255), // red
           Render._randomInt(0, 255), // green
           Render._randomInt(0, 255), // blue
-          255 // alpha
+          // 255 // alpha
         );
 
       }
 
     }
 
-    this.viewer.draw(data);
+    return data;
 
   }
 
