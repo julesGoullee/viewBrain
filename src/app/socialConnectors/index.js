@@ -12,7 +12,8 @@ const SocialConnectors = {
 
         SocialConnectors.instagram = new Instagram({
           username: Config.socialConnectors.instagram.username,
-          password: Config.socialConnectors.instagram.password
+          password: Config.socialConnectors.instagram.password,
+          tags: Config.tagWatcher.tags
         });
 
         break;
@@ -24,6 +25,7 @@ const SocialConnectors = {
           consumerSecret: Config.socialConnectors.twitter.consumerSecret,
           accessTokenKey: Config.socialConnectors.twitter.accessTokenKey,
           accessTokenSecret: Config.socialConnectors.twitter.accessTokenSecret,
+          tags: Config.tagWatcher.tags
         });
 
         break;

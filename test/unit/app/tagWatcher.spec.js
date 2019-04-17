@@ -31,7 +31,6 @@ describe('Tag watcher', () => {
     await MockDb.reset();
     this.SocialConnector = MockSocialConnector(this.sandbox);
     this.mockSocialConnector = new this.SocialConnector();
-    this.tags = ['tag1', 'tag2'];
     this.tagWatcher = new TagWatcher({ socialConnector: this.mockSocialConnector, tags: this.tags });
 
   });
@@ -44,9 +43,13 @@ describe('Tag watcher', () => {
 
   it('Should create tag watcher', async () => {
 
-    expect(this.tagWatcher.tags).to.be.deep.eq(this.tags);
     expect(this.tagWatcher.socialConnector).to.be.eq(this.mockSocialConnector);
-    expect(this.tagWatcher.usersByTag).to.be.deep.eq({ tag1: [], tag2: [] });
+    expect(this.tagWatcher.usersByTag).to.be.deep.eq(Config.tagWatcher.tags.reduce((acc, tag) => {
+
+      acc[tag] = [];
+      return acc;
+
+    }, {}) );
     expect(this.tagWatcher.stopper).to.be.null;
 
   });
@@ -101,11 +104,11 @@ describe('Tag watcher', () => {
     expect(this.tagWatcher.stopper).to.be.eq(stubStopper);
     expect(this.mockSocialConnector.onNewPost.calledOnce).to.be.true;
 
-    expect(this.mockSocialConnector.onNewPost.calledWith(this.tags, this.tagWatcher.onNewPost) ).to.be.true;
+    expect(this.mockSocialConnector.onNewPost.calledWith(this.tagWatcher.onNewPost) ).to.be.true;
 
-    this.tags.forEach(tag =>{
+    Config.tagWatcher.tags.forEach(tag =>{
 
-      this.tagWatcher.tags[tag] = ['post1', 'post2'];
+      this.tagWatcher.usersByTag[tag] = ['post1', 'post2'];
 
     });
 
@@ -117,7 +120,14 @@ describe('Tag watcher', () => {
     expect(stubFollowBestUser.calledOnce).to.be.true;
     expect(stubUnfollowOldUser.calledOnce).to.be.true;
     expect(this.tagWatcher.stopper).to.be.null;
-    expect(this.tagWatcher.usersByTag).to.be.deep.eq({ tag1: [], tag2: [] });
+    expect(this.tagWatcher.usersByTag).to.be.deep.eq(Config.tagWatcher.tags.reduce( (acc, tag) => {
+
+      acc[tag] = [];
+
+      return acc;
+
+    }, {}));
+
     expect(stubLogger.calledWith('TagWatcher finish', { service: 'tagWatcher' }) ).to.be.true;
     Config.tagWatcher.intervalFollow = '3600000';
 
@@ -125,9 +135,9 @@ describe('Tag watcher', () => {
 
   it('Should handle new post', () => {
 
-    this.tagWatcher.onNewPost({ tag: 'tag1', user: 'user' });
-    expect(this.tagWatcher.usersByTag.tag1.length).to.be.eq(1);
-    expect(this.tagWatcher.usersByTag.tag1[0]).to.be.eq('user');
+    this.tagWatcher.onNewPost({ tag: 'creative', user: 'user' });
+    expect(this.tagWatcher.usersByTag.creative.length).to.be.eq(1);
+    expect(this.tagWatcher.usersByTag.creative[0]).to.be.eq('user');
 
   });
 
@@ -135,7 +145,7 @@ describe('Tag watcher', () => {
 
     it('Should follow best users with enough user in each tags', async () => {
 
-      this.tags.forEach(tag => {
+      Config.tagWatcher.tags.forEach(tag => {
 
         for(let i = 0; i < Config.tagWatcher.userByTag; i++){
 
@@ -153,15 +163,15 @@ describe('Tag watcher', () => {
 
       const followings = await Following.find();
 
-      expect(this.mockSocialConnector.follow.callCount).to.be.eq(Config.tagWatcher.userByTag * this.tags.length);
-      expect(this.mockSocialConnector.follow.args[0][0]).to.be.eq('username_tag1_4');
-      expect(followings.length).to.be.eq(Config.tagWatcher.userByTag * this.tags.length);
+      expect(this.mockSocialConnector.follow.callCount).to.be.eq(Config.tagWatcher.userByTag * Config.tagWatcher.tags.length);
+      expect(this.mockSocialConnector.follow.args[0][0]).to.be.eq('username_abstractart_4');
+      expect(followings.length).to.be.eq(Config.tagWatcher.userByTag * Config.tagWatcher.tags.length);
 
     });
 
     it('Should follow best users with more user in each tags', async () => {
 
-      this.tags.forEach(tag => {
+      Config.tagWatcher.tags.forEach(tag => {
 
         for(let i = 0; i < parseInt(Config.tagWatcher.userByTag, 10) + 5; i++){
 
@@ -179,16 +189,16 @@ describe('Tag watcher', () => {
 
       const followings = await Following.find();
 
-      expect(this.mockSocialConnector.follow.callCount).to.be.eq(Config.tagWatcher.userByTag * this.tags.length);
-      expect(this.mockSocialConnector.follow.args[0][0]).to.be.eq('username_tag1_9');
-      expect(followings.length).to.be.eq(Config.tagWatcher.userByTag * this.tags.length);
+      expect(this.mockSocialConnector.follow.callCount).to.be.eq(Config.tagWatcher.userByTag * Config.tagWatcher.tags.length);
+      expect(this.mockSocialConnector.follow.args[0][0]).to.be.eq('username_abstractart_9');
+      expect(followings.length).to.be.eq(Config.tagWatcher.userByTag * Config.tagWatcher.tags.length);
 
     });
 
     it('Should follow best users with less user in each tags', async () => {
 
       const nbPeerTag = parseInt(Config.tagWatcher.userByTag, 10) - 2;
-      this.tags.forEach(tag => {
+      Config.tagWatcher.tags.forEach(tag => {
 
         for(let i = 0; i < nbPeerTag; i++){
 
@@ -206,9 +216,9 @@ describe('Tag watcher', () => {
 
       const followings = await Following.find();
 
-      expect(this.mockSocialConnector.follow.callCount).to.be.eq(nbPeerTag * this.tags.length);
-      expect(this.mockSocialConnector.follow.args[0][0]).to.be.eq('username_tag1_2');
-      expect(followings.length).to.be.eq(nbPeerTag * this.tags.length);
+      expect(this.mockSocialConnector.follow.callCount).to.be.eq(nbPeerTag * Config.tagWatcher.tags.length);
+      expect(this.mockSocialConnector.follow.args[0][0]).to.be.eq('username_abstractart_2');
+      expect(followings.length).to.be.eq(nbPeerTag * Config.tagWatcher.tags.length);
 
     });
 

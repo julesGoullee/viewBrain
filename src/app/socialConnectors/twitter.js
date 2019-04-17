@@ -11,12 +11,37 @@ const Follower = require('../models/follower');
 
 class Twitter extends Interface {
 
-  constructor({ consumerKey, consumerSecret, accessTokenKey, accessTokenSecret } = {}) {
+  constructor({ consumerKey, consumerSecret, accessTokenKey, accessTokenSecret, tags } = {}) {
 
     super();
     assert(consumerKey && consumerSecret && accessTokenKey && accessTokenSecret, 'invalid_credentials');
     this.socialId = null;
     this.initilized = false;
+    this.tags = tags;
+
+    this.contentTags = tags.reduce( (acc, tag, i) => {
+
+      if(i === 0){
+
+        return `#${tag}`;
+
+      }
+
+      return `${acc} #${tag}`;
+
+    }, '');
+
+    this.tagTrack = this.tags.reduce( (acc, tag, i) => {
+
+      if(i === 0){
+
+        return `#${tag}`;
+
+      }
+
+      return `${acc},#${tag}`;
+
+    }, '');
 
     this.client = promisifyAll(new Twit({
       consumer_key: consumerKey,
@@ -149,7 +174,7 @@ class Twitter extends Interface {
     assert(mediaRes.media_id_string, 'cannot_publish_media');
 
     const tweetRes = await this.limitedUploadPhotoTweet('statuses/update', {
-      status: `ok @${username}`,
+      status: `Just for you @${username} ${this.contentTags}`,
       media_ids: mediaRes.media_id_string
     });
 
@@ -163,23 +188,11 @@ class Twitter extends Interface {
 
   }
 
-  onNewPost(tags, handler){
+  onNewPost(handler){
 
     assert(this.initilized, 'uninitialized_account');
 
-    const track = tags.reduce( (acc, tag, i) => {
-
-      if(i === 0){
-
-        return `#${tag}`;
-
-      }
-
-      return `${acc},#${tag}`;
-
-    }, '');
-
-    const stream = this.client.stream('statuses/filter', { track });
+    const stream = this.client.stream('statuses/filter', { track: this.tagTrack });
 
     stream.on('data', (event) => {
 
@@ -187,7 +200,7 @@ class Twitter extends Interface {
         return;
       }
 
-      const tag = tags.find(tag => event.extended_tweet.full_text.includes(tag) );
+      const tag = this.tags.find(tag => event.extended_tweet.full_text.includes(tag) );
 
       if(!tag){
         return;
@@ -205,7 +218,7 @@ class Twitter extends Interface {
 
     stream.on('error', (error) => {
 
-      logger.error('error on new post', { tags, error: error.message });
+      logger.error('error on new post', { tags: this.tags, error: error.message });
 
     });
 

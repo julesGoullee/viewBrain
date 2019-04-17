@@ -34,7 +34,8 @@ describe('SocialConnectors:Twitter', () => {
       consumerKey: 'consumerKey',
       consumerSecret: 'consumerSecret',
       accessTokenKey: 'accessTokenKey',
-      accessTokenSecret: 'accessTokenSecret'
+      accessTokenSecret: 'accessTokenSecret',
+      tags: Config.tagWatcher.tags
     });
 
   });
@@ -51,7 +52,8 @@ describe('SocialConnectors:Twitter', () => {
       consumerKey: 'consumerKey',
       consumerSecret: 'consumerSecret',
       accessTokenKey: 'accessTokenKey',
-      accessTokenSecret: 'accessTokenSecret'
+      accessTokenSecret: 'accessTokenSecret',
+      tags: Config.tagWatcher.tags
     });
 
     expect(twitter.socialId).to.be.null;
@@ -523,7 +525,7 @@ describe('SocialConnectors:Twitter', () => {
 
       expect(this.stubUploadPhotoTweet.calledOnce).to.be.true;
       expect(this.stubUploadPhotoTweet.calledWith('statuses/update', {
-        status: 'ok @username',
+        status: `Just for you @username ${this.twitter.contentTags}`,
         media_ids: 'media_id_string'
       }) ).to.be.true;
 
@@ -559,10 +561,10 @@ describe('SocialConnectors:Twitter', () => {
 
       this.stubStream.returns(stubStream);
 
-      const stop = this.twitter.onNewPost(['tag1', 'tag2'], stubHandler);
+      const stop = this.twitter.onNewPost(stubHandler);
 
       expect(this.stubStream.calledOnce).to.be.true;
-      expect(this.stubStream.calledWith('statuses/filter', { track: '#tag1,#tag2' }) ).to.be.true;
+      expect(this.stubStream.calledWith('statuses/filter', { track: this.twitter.tagTrack }) ).to.be.true;
 
       expect(stubStream.on.callCount).to.be.eq(2);
       expect(stubStream.on.args[0][0]).to.be.eq('data');
@@ -571,7 +573,7 @@ describe('SocialConnectors:Twitter', () => {
 
       stubStream.on.args[0][1]({
         extended_tweet: {
-          full_text: '#tag2 text'
+          full_text: '#creative text'
         },
         user: {
           id: 'id',
@@ -585,7 +587,7 @@ describe('SocialConnectors:Twitter', () => {
           socialId: 'id',
           username: 'screen_name'
         },
-        tag: 'tag2'
+        tag: 'creative'
       }) ).to.be.true;
 
       expect(stubLogger.callCount).to.be.eq(0);
@@ -698,6 +700,7 @@ describe('SocialConnectors:Twitter', () => {
         consumerSecret: Config.socialConnectors.twitter.consumerSecret,
         accessTokenKey: Config.socialConnectors.twitter.accessTokenKey,
         accessTokenSecret: Config.socialConnectors.twitter.accessTokenSecret,
+        tags: Config.tagWatcher.tags
       });
       await this.twitter.init();
 
@@ -721,7 +724,7 @@ describe('SocialConnectors:Twitter', () => {
 
     it.skip('Should stream new post', async () => {
 
-      const stop = this.twitter.onNewPost('#art', (post) => {
+      const stop = this.twitter.onNewPost((post) => {
 
         logger.info('post', { post });
 
