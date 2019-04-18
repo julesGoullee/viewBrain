@@ -81,9 +81,16 @@ class TagWatcher {
         username: user.username
       });
 
-      await this.socialConnector.follow(following.username);
+      try {
 
-      await following.save();
+        await this.socialConnector.follow(following.username);
+        await following.save();
+
+      } catch (error){
+
+        Utils.logger.error('Cannot follow', { error, username: following.username });
+
+      }
 
     }) );
 
@@ -92,7 +99,7 @@ class TagWatcher {
   async unfollowOldUser(){
 
     const oldUsers = await Following.findOlds(moment.utc().subtract(Config.tagWatcher.timerUnfollow,'days') );
-    await Promise.all(oldUsers.map(this.socialConnector.unfollow) );
+    await Promise.all(oldUsers.map(oldUser => this.socialConnector.unfollow(oldUser) ) );
 
   }
 
