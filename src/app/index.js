@@ -12,7 +12,7 @@ async function Run(){
   const onError = async (error) => {
 
     /* istanbul ignore else */
-    if(error){
+    if(error && error.message){
 
       Utils.logger.error(error);
 
