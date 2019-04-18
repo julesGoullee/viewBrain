@@ -25,6 +25,7 @@ async function Run(){
 
     Object.keys(stoppers).forEach(stopper => stoppers[stopper]() );
     await Db.disconnect();
+    process.exit(0);
 
   };
 
