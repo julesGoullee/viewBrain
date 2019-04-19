@@ -9,5 +9,5 @@ docker run --rm -it \
     view-brain:latest
     
 ### TODO:
-- Create script follower/unfollow best user on specific tag
+- check before follow if already in db
 - Create video moving on scale parameter
