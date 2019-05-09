@@ -44,8 +44,26 @@ describe('App:Run', () => {
 
   });
 
-  it('Should run', async () => {
+  it('Should catch global errors and disconnect db', async () => {
 
+    const spyLoggerError = this.sandbox.spy(Utils.logger, 'error');
+    const spyDbDisconnect = this.sandbox.spy(Db, 'disconnect');
+
+    const stubStop = this.sandbox.stub();
+
+    this.stubDbConnect.rejects(new Error('fake-error') );
+
+    await Run();
+    expect(spyLoggerError.calledOnce).to.be.true;
+    expect(spyLoggerError.args[0][0].message).to.be.eq('fake-error');
+    expect(spyDbDisconnect.calledOnce).to.be.true;
+    expect(stubStop.called).to.be.false;
+
+  });
+
+  it('Should run handler when enable', async () => {
+
+    Config.handler.enable = true;
     let count = 0;
     let stopper =  null;
 
@@ -71,29 +89,12 @@ describe('App:Run', () => {
     expect(this.stubHandleRun.callCount).to.be.eq(2);
     expect(this.stubTagWatcherRun.callCount).to.be.eq(0);
     expect(stopper.tagWatcher).not.to.exist;
+    Config.handler.enable = false;
 
   });
 
-  it('Should catch global errors and disconnect db', async () => {
-
-    const spyLoggerError = this.sandbox.spy(Utils.logger, 'error');
-    const spyDbDisconnect = this.sandbox.spy(Db, 'disconnect');
-
-    const stubStop = this.sandbox.stub();
-    const stubInfiniteLoop = this.sandbox.stub(Utils, 'infiniteLoop').resolves(stubStop);
-
-    this.stubDbConnect.rejects(new Error('fake-error') );
-
-    await Run();
-    expect(spyLoggerError.calledOnce).to.be.true;
-    expect(spyLoggerError.args[0][0].message).to.be.eq('fake-error');
-    expect(spyDbDisconnect.calledOnce).to.be.true;
-    expect(stubInfiniteLoop.called).to.be.false;
-    expect(stubStop.called).to.be.false;
-
-  });
-
-  it('Should catch errors in loop', async () => {
+  it('Should catch errors in handler loop', async () => {
+    Config.handler.enable = true;
 
     const spyLoggerError = this.sandbox.spy(Utils.logger, 'error');
     const spyDbDisconnect = this.sandbox.spy(Db, 'disconnect');
@@ -124,6 +125,7 @@ describe('App:Run', () => {
     expect(spyLoggerError.args[0][0].message).to.be.eq('fake-error-1');
     expect(spyDbDisconnect.calledOnce).to.be.true;
     expect(spyInfiniteLoop.calledOnce).to.be.true;
+    Config.handler.enable = false;
 
   });
 

@@ -9,5 +9,6 @@ docker run --rm -it \
     view-brain:latest
     
 ### TODO:
-- check before follow if already in db
+- parse in config number params
+- Fix unfollow when already unfollow
 - Create video moving on scale parameter

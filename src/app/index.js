@@ -5,45 +5,51 @@ const SocialConnectors = require('./socialConnectors');
 const Handler = require('./handler');
 const TagWatcher = require('./tagWatcher');
 
+const stoppers = {};
+
+async function onError (error){
+
+  /* istanbul ignore else */
+  if(error && error.message){
+
+    Utils.logger.error(error);
+
+  } else {
+
+    // eslint-disable-next-line
+    console.error(error);
+
+  }
+
+  Object.keys(stoppers).forEach(stopper => stoppers[stopper]() );
+  await Db.disconnect();
+  // eslint-disable-next-line
+  // process.exit(0);
+
+}
+
 async function Run(){
-
-  const stoppers = {};
-
-  const onError = async (error) => {
-
-    /* istanbul ignore else */
-    if(error && error.message){
-
-      Utils.logger.error(error);
-
-    } else {
-
-      // eslint-disable-next-line
-      console.log(error);
-
-    }
-
-    Object.keys(stoppers).forEach(stopper => stoppers[stopper]() );
-    await Db.disconnect();
-    process.exit(0);
-
-  };
 
   try {
 
     const socialConnector = SocialConnectors.init();
-    const handler = new Handler({ socialConnector });
 
     await Promise.all([
       Db.connect(),
       socialConnector.init()
     ]);
 
-    stoppers.handler = Utils.infiniteLoop(async () => {
+    if(Config.handler.enable){
 
-      await handler.run();
+      const handler = new Handler({ socialConnector });
 
-    }, onError);
+      stoppers.handler = Utils.infiniteLoop(async () => {
+
+        await handler.run();
+
+      }, onError);
+
+    }
 
     if(Config.tagWatcher.enable){
 
@@ -56,7 +62,6 @@ async function Run(){
       }, onError);
 
     }
-
 
     return stoppers;
 

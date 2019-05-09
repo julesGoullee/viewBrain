@@ -10,7 +10,6 @@ describe('Following', () => {
   before(async () => {
 
     await MockDb.start();
-
     await Db.connect();
 
   });
@@ -29,7 +28,8 @@ describe('Following', () => {
 
     this.following = new Following({
       socialId: 'socialId',
-      username: 'username'
+      username: 'username',
+      fromTag: 'tag1'
     });
 
   });
@@ -37,6 +37,22 @@ describe('Following', () => {
   afterEach( () => {
 
     this.sandbox.restore();
+
+  });
+
+  it('Should reload', async () => {
+
+    await this.following.save();
+
+    const followingCopy = await Following.findOne({ _id: this.following.id });
+
+    await this.following.updateOne({
+      socialId: 'socialIdUpdated'
+    });
+    expect(followingCopy.socialId).to.be.eq('socialId');
+
+    await followingCopy.reload();
+    expect(followingCopy.socialId).to.be.eq('socialIdUpdated');
 
   });
 
@@ -60,7 +76,8 @@ describe('Following', () => {
     await this.following.save();
     const following1 = new Following({
       socialId: 'socialId1',
-      username: 'username1'
+      username: 'username1',
+      fromTag: 'tag1'
     });
 
     await following1.save();
@@ -69,7 +86,8 @@ describe('Following', () => {
     await wait(1000);
     const following2 = new Following({
       socialId: 'socialId2',
-      username: 'username2'
+      username: 'username2',
+      fromTag: 'tag1'
     });
 
     await following2.save();
@@ -79,6 +97,25 @@ describe('Following', () => {
     expect(followingsOlds.length).to.be.eq(2);
     expect(followingsOlds[0].username).to.be.eq('username');
     expect(followingsOlds[1].username).to.be.eq('username1');
+
+  });
+
+  it('Should get olds only active', async () => {
+
+    await this.following.save();
+
+    const following1 = new Following({
+      socialId: 'socialId1',
+      username: 'username1',
+      fromTag: 'tag1',
+      active: false
+    });
+    await following1.save();
+
+    const date = moment.utc();
+    const followingsOlds = await Following.findOlds(date);
+    expect(followingsOlds.length).to.be.eq(1);
+    expect(followingsOlds[0].username).to.be.eq('username');
 
   });
 
