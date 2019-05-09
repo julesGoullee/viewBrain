@@ -144,48 +144,123 @@ describe('Tag watcher', () => {
 
   });
 
-  it('Should run', async () => {
+  describe('Watch for following', () => {
 
-    Config.tagWatcher.intervalFollow = '1000';
-    const stubFollowBestUser = this.sandbox.stub(this.tagWatcher, 'followBestUsers');
-    const stubUnfollowOldUser = this.sandbox.stub(this.tagWatcher, 'unfollowOldUser');
-    const stubStopper = this.sandbox.stub();
-    this.mockSocialConnector.onNewPost.returns(stubStopper);
-    const stubLogger = this.sandbox.stub(Utils.logger, 'info');
+    it('Should watch for following', async () => {
 
-    const promiseEnd = this.tagWatcher.run();
+      Config.tagWatcher.intervalFollow = '1000';
+      const stubFollowBestUser = this.sandbox.stub(this.tagWatcher, 'followBestUsers');
+      const stubStopper = this.sandbox.stub();
+      this.mockSocialConnector.onNewPost.returns(stubStopper);
 
-    expect(stubLogger.calledOnce).to.be.true;
-    expect(stubLogger.calledWith('TagWatcher start', { service: 'tagWatcher' }) ).to.be.true;
-    expect(this.tagWatcher.stopper).to.be.eq(stubStopper);
-    expect(this.mockSocialConnector.onNewPost.calledOnce).to.be.true;
+      const promiseEnd = this.tagWatcher.watchForFollowing();
 
-    expect(this.mockSocialConnector.onNewPost.calledWith(this.tagWatcher.onNewPost) ).to.be.true;
+      expect(this.tagWatcher.stopper).to.be.eq(stubStopper);
+      expect(this.mockSocialConnector.onNewPost.calledOnce).to.be.true;
 
-    Config.tagWatcher.tags.forEach(tag =>{
+      expect(this.mockSocialConnector.onNewPost.calledWith(this.tagWatcher.onNewPost) ).to.be.true;
 
-      this.tagWatcher.usersByTag[tag] = ['post1', 'post2'];
+      Config.tagWatcher.tags.forEach(tag =>{
+
+        this.tagWatcher.usersByTag[tag] = ['post1', 'post2'];
+
+      });
+
+      expect(stubStopper.callCount).to.be.eq(0);
+
+      await promiseEnd;
+
+      expect(stubStopper.calledOnce).to.be.true;
+      expect(stubFollowBestUser.calledOnce).to.be.true;
+      expect(this.tagWatcher.stopper).to.be.null;
+      expect(this.tagWatcher.usersByTag).to.be.deep.eq(Config.tagWatcher.tags.reduce( (acc, tag) => {
+
+        acc[tag] = [];
+
+        return acc;
+
+      }, {}));
+
+      Config.tagWatcher.intervalFollow = '3600000';
 
     });
 
-    expect(stubStopper.callCount).to.be.eq(0);
+  });
 
-    await promiseEnd;
+  describe('Run', () => {
 
-    expect(stubStopper.calledOnce).to.be.true;
-    expect(stubFollowBestUser.calledOnce).to.be.true;
-    expect(stubUnfollowOldUser.calledOnce).to.be.true;
-    expect(this.tagWatcher.stopper).to.be.null;
-    expect(this.tagWatcher.usersByTag).to.be.deep.eq(Config.tagWatcher.tags.reduce( (acc, tag) => {
+    it('Should run', async () => {
 
-      acc[tag] = [];
+      const stubWatchForFollowing = this.sandbox.stub(this.tagWatcher, 'watchForFollowing');
+      const stubUnfollowOldUser = this.sandbox.stub(this.tagWatcher, 'unfollowOldFollowing');
+      const stubLogger = this.sandbox.stub(Utils.logger, 'info');
 
-      return acc;
+      await this.tagWatcher.run();
 
-    }, {}));
+      expect(stubLogger.callCount).to.be.eq(2);
+      expect(stubLogger.calledWith('TagWatcher start', { service: 'tagWatcher' }) ).to.be.true;
+      expect(stubLogger.calledWith('TagWatcher finish', { service: 'tagWatcher' }) ).to.be.true;
+      expect(stubWatchForFollowing.callCount).to.be.eq(0);
+      expect(stubUnfollowOldUser.callCount).to.be.eq(0);
 
-    expect(stubLogger.calledWith('TagWatcher finish', { service: 'tagWatcher' }) ).to.be.true;
-    Config.tagWatcher.intervalFollow = '3600000';
+    });
+
+    it('Should run with watch for following', async () => {
+
+      Config.tagWatcher.watchForFollowing = true;
+      const stubWatchForFollowing = this.sandbox.stub(this.tagWatcher, 'watchForFollowing');
+      const stubUnfollowOldUser = this.sandbox.stub(this.tagWatcher, 'unfollowOldFollowing');
+      const stubLogger = this.sandbox.stub(Utils.logger, 'info');
+
+      await this.tagWatcher.run();
+
+      expect(stubLogger.callCount).to.be.eq(2);
+      expect(stubLogger.calledWith('TagWatcher start', { service: 'tagWatcher' }) ).to.be.true;
+      expect(stubLogger.calledWith('TagWatcher finish', { service: 'tagWatcher' }) ).to.be.true;
+      expect(stubWatchForFollowing.calledOnce).to.be.true;
+      expect(stubUnfollowOldUser.callCount).to.be.eq(0);
+      Config.tagWatcher.watchForFollowing = false;
+
+    });
+
+    it('Should run with unfollow old following', async () => {
+
+      Config.tagWatcher.unfollowOldFollowing = true;
+      const stubWatchForFollowing = this.sandbox.stub(this.tagWatcher, 'watchForFollowing');
+      const stubUnfollowOldUser = this.sandbox.stub(this.tagWatcher, 'unfollowOldFollowing');
+      const stubLogger = this.sandbox.stub(Utils.logger, 'info');
+
+      await this.tagWatcher.run();
+
+      expect(stubLogger.callCount).to.be.eq(2);
+      expect(stubLogger.calledWith('TagWatcher start', { service: 'tagWatcher' }) ).to.be.true;
+      expect(stubLogger.calledWith('TagWatcher finish', { service: 'tagWatcher' }) ).to.be.true;
+      expect(stubWatchForFollowing.callCount).to.be.eq(0);
+      expect(stubUnfollowOldUser.calledOnce).to.be.true;
+      Config.tagWatcher.unfollowOldFollowing = false;
+
+    });
+
+    it('Should run with all', async () => {
+
+      Config.tagWatcher.unfollowOldFollowing = true;
+      Config.tagWatcher.watchForFollowing = true;
+      const stubWatchForFollowing = this.sandbox.stub(this.tagWatcher, 'watchForFollowing');
+      const stubUnfollowOldUser = this.sandbox.stub(this.tagWatcher, 'unfollowOldFollowing');
+      const stubLogger = this.sandbox.stub(Utils.logger, 'info');
+
+      await this.tagWatcher.run();
+
+      expect(stubLogger.callCount).to.be.eq(2);
+      expect(stubLogger.calledWith('TagWatcher start', { service: 'tagWatcher' }) ).to.be.true;
+      expect(stubLogger.calledWith('TagWatcher finish', { service: 'tagWatcher' }) ).to.be.true;
+      expect(stubWatchForFollowing.calledOnce).to.be.true;
+      expect(stubUnfollowOldUser.calledOnce).to.be.true;
+
+      Config.tagWatcher.watchForFollowing = false;
+      Config.tagWatcher.unfollowOldFollowing = false;
+
+    });
 
   });
 
@@ -202,10 +277,11 @@ describe('Tag watcher', () => {
     it('Should follow best users', async () => {
 
       const spyFollowingSave = this.sandbox.spy(Following.prototype, 'save');
+      const stubLoggerInfo = this.sandbox.stub(Utils.logger, 'info');
 
       Config.tagWatcher.tags.forEach(tag => {
 
-        for(let i = 0; i < Config.tagWatcher.userByTag; i++){
+        for(let i = 0; i < parseInt(Config.tagWatcher.userByTag, 10); i++){
 
           this.tagWatcher.usersByTag[tag].push({
             socialId: `socialId${tag}_${i}`,
@@ -223,8 +299,22 @@ describe('Tag watcher', () => {
       const followings = await Following.find();
 
       expect(this.mockSocialConnector.follow.callCount).to.be.eq(Config.tagWatcher.userByTag * Config.tagWatcher.tags.length);
-      expect(spyFollowingSave.callCount).to.be.eq(Config.tagWatcher.userByTag * Config.tagWatcher.tags.length);
       expect(this.mockSocialConnector.follow.calledWith('username_abstractart_4') ).to.be.true;
+      expect(spyFollowingSave.callCount).to.be.eq(Config.tagWatcher.userByTag * Config.tagWatcher.tags.length);
+
+      expect(stubLoggerInfo.callCount).to.be.eq(Config.tagWatcher.userByTag * Config.tagWatcher.tags.length + 1);
+      expect(stubLoggerInfo.args[0]).to.be.deep.eq([
+        'FollowBestUsers',
+        {
+          service: 'tagWatcher',
+          stats: Config.tagWatcher.tags.map(tag => ({ tag, count: parseInt(Config.tagWatcher.userByTag, 10)}) )
+        }
+      ]);
+      expect(stubLoggerInfo.args[1][0]).to.be.eq('New following');
+      expect(stubLoggerInfo.args[1][1].service).to.be.eq('tagWatcher');
+      expect(stubLoggerInfo.args[1][1].username).to.exist;
+      expect(stubLoggerInfo.args[1][1].fromTag).to.exist;
+
       expect(followings.length).to.be.eq(Config.tagWatcher.userByTag * Config.tagWatcher.tags.length);
 
     });
@@ -232,6 +322,7 @@ describe('Tag watcher', () => {
     it('Should catch error for one user', async () => {
 
       const stubLoggerError = this.sandbox.stub(Utils.logger, 'error');
+      const stubLoggerInfo = this.sandbox.stub(Utils.logger, 'info');
       this.mockSocialConnector.follow.onSecondCall().rejects(new Error('fak-error') );
       const spyFollowingSave = this.sandbox.spy(Following.prototype, 'save');
 
@@ -255,16 +346,18 @@ describe('Tag watcher', () => {
       expect(stubLoggerError.calledOnce).to.be.true;
       expect(stubLoggerError.args[0][0]).to.be.eq('Cannot follow');
       expect(spyFollowingSave.callCount).to.be.eq(Config.tagWatcher.userByTag * Config.tagWatcher.tags.length -1);
+      expect(stubLoggerInfo.callCount).to.be.eq(Config.tagWatcher.userByTag * Config.tagWatcher.tags.length);
 
     });
 
   });
 
-  describe('unfollowOldUser', () => {
+  describe('unfollowOldFollowing', () => {
 
     it('Should unfollow old users', async () => {
 
       const spyFollowingUpdate = this.sandbox.spy(Following.prototype, 'updateOne');
+      const stubLoggerInfo = this.sandbox.stub(Utils.logger, 'info');
 
       const following1 = new Following({
         socialId: 'socialId1',
@@ -287,11 +380,15 @@ describe('Tag watcher', () => {
       await following2.save();
       await following3.save();
 
-      await this.tagWatcher.unfollowOldUser();
+      await this.tagWatcher.unfollowOldFollowing();
       expect(this.mockSocialConnector.unfollow.callCount).to.be.eq(2);
       expect(this.mockSocialConnector.unfollow.args[0][0]).to.be.eq('username1');
       expect(this.mockSocialConnector.unfollow.args[1][0]).to.be.eq('username2');
       expect(spyFollowingUpdate.callCount).to.be.eq(2);
+
+      expect(stubLoggerInfo.callCount).to.be.eq(2);
+      await following1.reload();
+      await following2.reload();
 
       await following1.reload();
       await following2.reload();
@@ -305,9 +402,9 @@ describe('Tag watcher', () => {
 
     it('Should catch error for one user', async () => {
 
-
       const spyFollowingUpdate = this.sandbox.spy(Following.prototype, 'updateOne');
       const stubLoggerError = this.sandbox.stub(Utils.logger, 'error');
+      const stubLoggerInfo = this.sandbox.stub(Utils.logger, 'info');
 
       const following1 = new Following({
         socialId: 'socialId1',
@@ -331,7 +428,7 @@ describe('Tag watcher', () => {
       await following3.save();
 
       this.mockSocialConnector.unfollow.onSecondCall().rejects(new Error('fake-error') );
-      await this.tagWatcher.unfollowOldUser();
+      await this.tagWatcher.unfollowOldFollowing();
 
       expect(this.mockSocialConnector.unfollow.callCount).to.be.eq(2);
       expect(this.mockSocialConnector.unfollow.args[0][0]).to.be.eq('username1');
@@ -340,6 +437,17 @@ describe('Tag watcher', () => {
       expect(stubLoggerError.callCount).to.be.eq(1);
       expect(stubLoggerError.args[0][0]).to.be.eq('Cannot unfollow');
       expect(stubLoggerError.args[0][1].username).to.be.eq('username2');
+
+      expect(stubLoggerInfo.calledOnce).to.be.true;
+      expect(stubLoggerInfo.args[0]).to.be.deep.eq([
+        'Unfollow',
+        {
+          service: 'tagWatcher',
+          username: 'username1',
+          fromTag: 'tag1',
+          createdAt: following1.createdAt.toISOString()
+        }
+      ]);
 
       await following1.reload();
       await following2.reload();

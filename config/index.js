@@ -62,9 +62,10 @@ module.exports = {
     ],
 
     intervalFollow: process.env.TAG_WATCHER_INTERVAL_FOLLOW || '3600000', // 1 hour
-    timerUnfollow: process.env.TAG_WATCHER_TIMER_UNFOLLOW || '4', // in day
+    timerUnfollow: process.env.TAG_WATCHER_TIMER_UNFOLLOW || '7', // in day
     userByTag: process.env.TAG_WATCHER_USER_BY_TAG || '5',
-
+    watchForFollowing: process.env.TAG_WATCHER_WATCH_FOR_FOLLOWING === 'true' || false,
+    unfollowOldFollowing: process.env.TAG_WATCHER_UNFOLLOW_FOLLOWING === 'true' || false,
   },
 
   handler: {

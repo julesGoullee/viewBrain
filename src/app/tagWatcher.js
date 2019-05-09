@@ -49,9 +49,7 @@ class TagWatcher {
 
   }
 
-  async run(){
-
-    Utils.logger.info('TagWatcher start', { service: 'tagWatcher' });
+  async watchForFollowing(){
 
     Config.tagWatcher.tags.forEach( (tag) => {
 
@@ -65,7 +63,6 @@ class TagWatcher {
     this.stopper();
 
     await this.followBestUsers();
-    await this.unfollowOldUser();
 
     this.stopper = null;
     Config.tagWatcher.tags.forEach( (tag) => {
@@ -73,6 +70,17 @@ class TagWatcher {
       this.usersByTag[tag] = [];
 
     });
+
+  }
+
+  async run(){
+
+    Utils.logger.info('TagWatcher start', { service: 'tagWatcher' });
+
+    await Promise.all([]
+      .concat(Config.tagWatcher.watchForFollowing ? this.watchForFollowing() : [])
+      .concat(Config.tagWatcher.unfollowOldFollowing ? this.unfollowOldFollowing() : [])
+    );
 
     Utils.logger.info('TagWatcher finish', { service: 'tagWatcher' });
 
@@ -88,7 +96,7 @@ class TagWatcher {
 
     const stats = Config.tagWatcher.tags.map(tag => ({ tag, count: this.usersByTag[tag].length }) );
 
-    Utils.logger.info(' FollowBestUsers', { service: 'tagWatcher', stats });
+    Utils.logger.info('FollowBestUsers', { service: 'tagWatcher', stats });
 
     await Promise.all(Config.tagWatcher.tags.map(async (tag) => {
 
@@ -107,6 +115,12 @@ class TagWatcher {
           await this.socialConnector.follow(following.username);
           await following.save();
 
+          Utils.logger.info('New following', {
+            service: 'tagWatcher',
+            username: following.username,
+            fromTag: following.fromTag
+          });
+
         } catch (error){
 
           Utils.logger.error('Cannot follow', { error, username: following.username });
@@ -119,7 +133,7 @@ class TagWatcher {
 
   }
 
-  async unfollowOldUser(){
+  async unfollowOldFollowing(){
 
     const oldUsers = await Following.findOlds(moment.utc().subtract(Config.tagWatcher.timerUnfollow,'days') );
     await Promise.all(oldUsers.map( async (oldUser) => {
@@ -128,6 +142,13 @@ class TagWatcher {
 
         await this.socialConnector.unfollow(oldUser.username);
         await oldUser.updateOne({ active: false });
+
+        Utils.logger.info('Unfollow', {
+          service: 'tagWatcher',
+          username: oldUser.username,
+          fromTag: oldUser.fromTag,
+          createdAt: oldUser.createdAt.toISOString()
+        });
 
       } catch (error){
 

@@ -11,13 +11,13 @@ const followingSchema = new Schema({
 
 class Following {
 
-  async reload (){
+  async reload(){
 
     Object.assign(this, await this.constructor.findOne({ _id: this.id }) );
 
   }
 
-  static async isPresent ({ socialId }){
+  static async isPresent({ socialId }){
 
     const following = await this.findOne({ socialId });
 
@@ -25,14 +25,14 @@ class Following {
 
   }
 
-  static async findOlds (timer){
+  static async findOlds(timer){
 
     return this.find({
       createdAt: {
         $lte: timer.toDate()
       },
       active: true
-    });
+    }).sort({ 'createdAt': 'asc' });
 
   }
 
