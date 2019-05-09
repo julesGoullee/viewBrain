@@ -242,14 +242,29 @@ class Twitter extends Interface {
 
     assert(this.initilized, 'uninitialized_account');
 
-    const followRes = await this.limitedUnfollow('friendships/destroy', {
-      screen_name: username,
-    });
+    try {
 
-    assert(followRes.id, 'cannot_unfollow');
+      const followRes = await this.limitedUnfollow('friendships/destroy', {
+        screen_name: username,
+      });
+
+      assert(followRes.id, 'cannot_unfollow');
+
+    } catch (error) {
+
+      if(!error[0] || error[0].message !== 'Sorry, that page does not exist.'){
+
+        throw Array.isArray(error) ? error[0] : error;
+
+      }
+
+    }
 
   }
 
 }
+
+
+Twitter.removeErrorMessage = 'Sorry, that page does not exist.';
 
 module.exports = Twitter;

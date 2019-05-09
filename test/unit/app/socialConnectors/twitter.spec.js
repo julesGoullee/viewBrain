@@ -682,10 +682,31 @@ describe('SocialConnectors:Twitter', () => {
 
     });
 
+    it('Cannot unfollow with removed user', async () => {
+
+      this.stubUnfollow.rejects([ new Error(Twitter.removeErrorMessage) ]);
+      await this.twitter.unfollow('username');
+      expect(this.stubUnfollow.calledWith('friendships/destroy', {
+        screen_name: 'username',
+      }) ).to.be.true;
+
+    });
+
     it('Cannot unfollow with invalid response', async () => {
 
       this.stubUnfollow.resolves({});
       await expect(this.twitter.unfollow('username') ).to.be.rejectedWith(Error, 'cannot_unfollow');
+
+    });
+
+    it('Cannot catch error', async () => {
+
+      this.stubUnfollow.rejects(new Error('fake-error') );
+      await expect(this.twitter.unfollow('username') ).to.be.rejectedWith(Error, 'fake-error');
+
+      this.stubUnfollow.rejects([new Error('fake-error') ]);
+      await expect(this.twitter.unfollow('username') ).to.be.rejectedWith(Error, 'fake-error');
+
 
     });
 
