@@ -17,12 +17,35 @@ class TagWatcher {
     }, {});
 
     this.stopper = null;
-    this.onNewPost = this.onNewPost.bind(this)
+    this.onNewPost = this.onNewPost.bind(this);
+
   }
 
-  static sortBestUsers(users){
+  static async sortBestUsers(users){
 
-    return users.sort( (user1, user2) => user1.followers > user2.followers ? -1 : 1);
+    const usersSorted =  Object.assign([], users).sort( (user1, user2) => user1.followers > user2.followers ? -1 : 1);
+    const bestUsers = [];
+
+    for(let i = 0; i < usersSorted.length; i++){
+
+      const user = usersSorted[i];
+      const isPresent = await Following.isPresent({ socialId: user.socialId });
+
+      if(!isPresent){
+
+        bestUsers.push(user);
+
+      }
+
+      if(bestUsers.length === parseInt(Config.tagWatcher.userByTag, 10) ){
+
+        break;
+
+      }
+
+    }
+
+    return bestUsers;
 
   }
 
@@ -37,7 +60,6 @@ class TagWatcher {
     });
 
     this.stopper = this.socialConnector.onNewPost(this.onNewPost);
-
     await Utils.wait(Config.tagWatcher.intervalFollow);
 
     this.stopper();
@@ -68,29 +90,30 @@ class TagWatcher {
 
     Utils.logger.info(' FollowBestUsers', { service: 'tagWatcher', stats });
 
-    const users = Config.tagWatcher.tags.map(tag => {
+    await Promise.all(Config.tagWatcher.tags.map(async (tag) => {
 
-      return TagWatcher.sortBestUsers(this.usersByTag[tag]).slice(0, Config.tagWatcher.userByTag);
+      const users = await TagWatcher.sortBestUsers(this.usersByTag[tag]);
 
-    }).reduce( (acc, item) => acc.concat(item), []);
+      await Promise.all(users.map(async (user) => {
 
-    await Promise.all(users.map(async (user) => {
+        const following = new Following({
+          socialId: user.socialId,
+          username: user.username,
+          fromTag: tag
+        });
 
-      const following = new Following({
-        socialId: user.socialId,
-        username: user.username
-      });
+        try {
 
-      try {
+          await this.socialConnector.follow(following.username);
+          await following.save();
 
-        await this.socialConnector.follow(following.username);
-        await following.save();
+        } catch (error){
 
-      } catch (error){
+          Utils.logger.error('Cannot follow', { error, username: following.username });
 
-        Utils.logger.error('Cannot follow', { error, username: following.username });
+        }
 
-      }
+      }) );
 
     }) );
 
@@ -99,7 +122,20 @@ class TagWatcher {
   async unfollowOldUser(){
 
     const oldUsers = await Following.findOlds(moment.utc().subtract(Config.tagWatcher.timerUnfollow,'days') );
-    await Promise.all(oldUsers.map(oldUser => this.socialConnector.unfollow(oldUser) ) );
+    await Promise.all(oldUsers.map( async (oldUser) => {
+
+      try {
+
+        await this.socialConnector.unfollow(oldUser.username);
+        await oldUser.updateOne({ active: false });
+
+      } catch (error){
+
+        Utils.logger.error('Cannot unfollow', { error, username: oldUser.username });
+
+      }
+
+    }) );
 
   }
 

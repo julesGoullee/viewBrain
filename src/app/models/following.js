@@ -5,24 +5,39 @@ const Schema = mongoose.Schema;
 const followingSchema = new Schema({
   socialId: { type: String, required: true, unique: true, dropDups: true },
   username: { type: String, required: true },
+  active: { type: Boolean, required: true, default: true },
+  fromTag: { type: String, required: true },
 }, { timestamps: true });
 
-followingSchema.statics.isPresent = async function({ socialId }){
+class Following {
 
-  const following = await this.findOne({ socialId });
+  async reload (){
 
-  return Boolean(following);
+    Object.assign(this, await this.constructor.findOne({ _id: this.id }) );
 
-};
+  }
 
-followingSchema.statics.findOlds = async function(timer){
+  static async isPresent ({ socialId }){
 
-  return this.find({
-    createdAt: {
-      $lte: timer.toDate()
-    }
-  });
+    const following = await this.findOne({ socialId });
 
-};
+    return Boolean(following);
+
+  }
+
+  static async findOlds (timer){
+
+    return this.find({
+      createdAt: {
+        $lte: timer.toDate()
+      },
+      active: true
+    });
+
+  }
+
+}
+
+followingSchema.loadClass(Following);
 
 module.exports = mongoose.model('Following', followingSchema);
