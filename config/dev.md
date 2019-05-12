@@ -10,5 +10,4 @@ docker run --rm -it \
     
 ### TODO:
 - parse in config number params
-- Fix unfollow when already unfollow
 - Create video moving on scale parameter
