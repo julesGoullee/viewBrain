@@ -1,5 +1,4 @@
 const path = require('path');
-const Winston = require('winston');
 
 const Utils = require(path.join(srcDir, '/utils') );
 
@@ -33,7 +32,7 @@ describe('Utils', () => {
 
   it('Should get logger', () => {
 
-    expect(Utils.logger).to.be.an.instanceof(Winston.Logger);
+    expect(Utils.logger).to.exist;
 
   });
 

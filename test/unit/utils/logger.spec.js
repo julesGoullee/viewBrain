@@ -1,9 +1,7 @@
 const path = require('path');
-const Winston = require('winston');
-const timber = require('timber');
 
 const Config = require(path.join(srcDir, '../config') );
-const Logger = require(path.join(srcDir, '/logger') );
+const Logger = require(path.join(srcDir, '/utils/logger') );
 
 describe('Logger', () => {
 
@@ -23,20 +21,17 @@ describe('Logger', () => {
 
     const logger = Logger();
 
-    expect(logger).to.be.an.instanceof(Winston.Logger);
-    expect(logger.transports.console.formatter).to.be.null;
+    expect(logger).to.exist;
 
   });
 
   it('Should get Logger production', () => {
 
-    Config.env = 'production';
-
+    Config.timber.apiKey = 'apiKey';
     const logger = Logger();
 
-    expect(logger.transports.console.formatter).to.be.eq(timber.formatters.Winston);
-
-    Config.env = 'development';
+    expect(logger).to.exist;
+    Config.timber.apiKey = null;
 
   });
 

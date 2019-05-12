@@ -55,6 +55,11 @@ module.exports = {
       'creativecoding',
       'generative',
       'generativeart',
+      'contemporaryart',
+      'colors',
+      'color',
+      'colour',
+      'abstract',
       'digitalart',
       'codeart',
       'art',
@@ -79,6 +84,9 @@ module.exports = {
     dbName: process.env.MONGO_DB_NAME || 'socialConnector-dev'
   },
 
-  timberKey: process.env.TIMBER_KEY || null,
+  timber: {
+    apiKey: process.env.TIMBER_API_KEY || null,
+    sourceId: process.env.TIMBER_SOURCE_ID || null
+  },
 
 };
