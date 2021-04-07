@@ -52,18 +52,18 @@ module.exports = {
     enable: process.env.TAG_WATCHER_ENABLE === 'true' || false,
     tags: [
       'abstractart',
-      'creativecoding',
-      'generative',
+      'NFTart',
+      'NFTartist',
       'generativeart',
       // 'contemporaryart',
-      'colors',
+      'NFT',
       // 'color',
       // 'colour',
       'abstract',
       'digitalart',
-      'codeart',
+      // 'codeart',
       'art',
-      'creative',
+      'ethereum',
     ],
 
     intervalFollow: process.env.TAG_WATCHER_INTERVAL_FOLLOW || '3600000', // 1 hour
