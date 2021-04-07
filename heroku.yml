@@ -5,10 +5,10 @@ build:
 run:
   app:
     command:
-      - yarn app
+      - npm run app
     image: app
 
   image:
     command:
-      - yarn image
+      - npm run image
     image: app
