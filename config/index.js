@@ -50,7 +50,7 @@ module.exports = {
   tagWatcher: {
 
     enable: process.env.TAG_WATCHER_ENABLE === 'true' || false,
-    tags: [
+    tags: process.env.TAG_WATCHER_TAGS !== '' && process.env.TAG_WATCHER_TAGS.split(',') || [
       'abstractart',
       'NFTart',
       'NFTartist',
