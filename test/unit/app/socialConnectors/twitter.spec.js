@@ -1,6 +1,8 @@
 const path = require('path');
+const sinon = require('sinon');
 const Twit = require('twitter');
 const fs = require('fs');
+const MockDb = require(path.join(srcDir, '../test/mockDb') );
 
 const Config = require(path.join(srcDir, '../config') );
 const { logger, wait } = require(path.join(srcDir, '/utils') );
@@ -28,7 +30,7 @@ describe('SocialConnectors:Twitter', () => {
 
   beforeEach( async () => {
 
-    this.sandbox = createSandbox();
+    this.sandbox = sinon.createSandbox();
     await MockDb.reset();
     this.twitter = new Twitter({
       consumerKey: 'consumerKey',
@@ -525,7 +527,7 @@ describe('SocialConnectors:Twitter', () => {
 
       expect(this.stubUploadPhotoTweet.calledOnce).to.be.true;
       expect(this.stubUploadPhotoTweet.calledWith('statuses/update', {
-        status: `Just for you @username ${this.twitter.contentTags}`,
+        status: `Bam! Enjoy @username! 🤖 ${this.twitter.contentTags}`,
         media_ids: 'media_id_string'
       }) ).to.be.true;
 

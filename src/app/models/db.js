@@ -9,10 +9,15 @@ const Db = {
     await mongoose.connect(Config.mongo.uri, {
       dbName: Config.mongo.dbName,
       useNewUrlParser: true,
-      retryWrites: true,
-      socketTimeoutMS: 0,
-      keepAlive: true,
-      reconnectTries: 30
+      // autoReconnect: true,
+      // reconnectTries: Number.MAX_VALUE,
+      // reconnectInterval: 1000,
+      useUnifiedTopology: true,
+      // useUnifiedTopology: true,
+      // retryWrites: true,
+      // socketTimeoutMS: 0,
+      // keepAlive: true,
+      // reconnectTries: 30
     });
 
     process.on('SIGINT', Db.disconnect);

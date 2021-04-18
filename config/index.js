@@ -1,4 +1,4 @@
-// require('dotenv').config();
+require('dotenv').config();
 
 module.exports = {
 
@@ -8,8 +8,9 @@ module.exports = {
     height: process.env.IMAGE_HEIGHT || '200',
     width: process.env.IMAGE_WIDTH || '200',
     blackWhite: process.env.BLACK_AND_WHITE === 'true' || false,
-    seed: parseInt('0x24C08142dD48ca242DdC2D08220666f7F1d5bB3f', 16) / 1000000000000000000000,
-    scale: 10,
+    seed: 1068441726,
+    // seed: 9062918455,
+    scale: 100,
     batchSize: process.env.IMAGE_BATCH_SIZE || '1000',
     outputsDir: './outputs',
   },
@@ -49,21 +50,20 @@ module.exports = {
   tagWatcher: {
 
     enable: process.env.TAG_WATCHER_ENABLE === 'true' || false,
-    tags: process.env.TAG_WATCHER_TAGS !== '' && process.env.TAG_WATCHER_TAGS.split(',') || [
+    tags: process.env.TAG_WATCHER_TAGS && process.env.TAG_WATCHER_TAGS !== '' && process.env.TAG_WATCHER_TAGS.split(',') || [
       'abstractart',
-      'NFTart',
-      'NFTartist',
-      // 'generativeart',
+      'creativecoding',
+      'generative',
+      'generativeart',
       // 'contemporaryart',
-      'NFT',
-      'NFTs',
+      'colors',
       // 'color',
       // 'colour',
-      'cryptoart',
-      'NFTCommunity',
-      'cryptoart',
+      'abstract',
+      'digitalart',
+      'codeart',
       'art',
-      'ethereum',
+      'creative',
     ],
 
     intervalFollow: process.env.TAG_WATCHER_INTERVAL_FOLLOW || '3600000', // 1 hour

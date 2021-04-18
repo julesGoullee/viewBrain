@@ -37,8 +37,8 @@
     ]
   },
   "dependencies": {
-    "@tensorflow/tfjs": "^3.3.0",
-    "@tensorflow/tfjs-node": "^3.3.0",
+    "@tensorflow/tfjs": "^3.4.0",
+    "@tensorflow/tfjs-node": "^3.4.0",
     "@timberio/node": "^0.35.0",
     "bluebird": "^3.7.2",
     "bottleneck": "^2.19.5",
@@ -47,8 +47,8 @@
     "instagram-web-api": "^2.2.2",
     "jpeg-js": "^0.4.3",
     "moment": "^2.29.1",
-    "mongodb": "^3.6.4",
-    "mongoose": "^5.12.0",
+    "mongodb": "^3.6.6",
+    "mongoose": "^5.12.4",
     "parcel-bundler": "^1.12.5",
     "random-seed": "^0.3.0",
     "tough-cookie-filestore2": "^1.0.0",
@@ -64,14 +64,14 @@
     "chai": "^4.3.4",
     "chai-as-promised": "^7.1.1",
     "cross-env": "^7.0.3",
-    "eslint": "^7.22.0",
+    "eslint": "^7.24.0",
     "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^4.3.1",
+    "eslint-plugin-promise": "^5.1.0",
     "gh-pages": "^3.1.0",
     "migrate-mongo": "^8.2.2",
     "mocha": "^8.3.2",
     "mongodb-memory-server": "^6.9.6",
     "nyc": "^15.1.0",
-    "sinon": "^9.2.4"
+    "sinon": "^10.0.0"
   }
 }
