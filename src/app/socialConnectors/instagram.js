@@ -1,5 +1,4 @@
 const assert = require('assert');
-const path = require('path');
 
 const Insta = require('instagram-web-api');
 const FileCookieStore = require('tough-cookie-filestore2');
