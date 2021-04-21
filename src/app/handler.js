@@ -40,7 +40,7 @@ class Handler {
 
   async handleOne(follower){
 
-    Utils.logger.info('handleOne start', { socialId: follower.socialId });
+    Utils.logger.info('handleOne start', { socialId: follower.socialId, username: follower.username });
 
     const render = await Handler.getRender(follower.socialId);
 
@@ -51,7 +51,7 @@ class Handler {
     follower.status = 'uploaded';
     await follower.save();
 
-    Utils.logger.info('handleOne finish', { socialId: follower.socialId });
+    Utils.logger.info('handleOne finish', { socialId: follower.socialId, username: follower.username });
 
   }
 

@@ -527,7 +527,7 @@ describe('SocialConnectors:Twitter', () => {
 
       expect(this.stubUploadPhotoTweet.calledOnce).to.be.true;
       expect(this.stubUploadPhotoTweet.calledWith('statuses/update', {
-        status: `Bam! Enjoy @username! 🤖 ${this.twitter.contentTags}`,
+        status: `Bam! Please welcome your piece @username! 💥 Follow @avantgardenft to get your unique piece! ❤️ ${this.twitter.contentTags}`,
         media_ids: 'media_id_string'
       }) ).to.be.true;
 
