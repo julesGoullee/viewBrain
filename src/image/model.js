@@ -150,7 +150,7 @@ class Model {
 
     const regularize = Model.regularizeTensor(output);
     tf.dispose([input, regularize]);
-
+    tf.dispose(this.model);
     return regularize;
 
   }
