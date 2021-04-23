@@ -4,6 +4,7 @@ const Jpeg = require('jpeg-js');
 
 const Config = require('../../config');
 const { logger } = require('../utils');
+const Jimp = require('jimp');
 
 class Jpg {
 
@@ -19,6 +20,38 @@ class Jpg {
 
     assert(data.length === this.height * this.width * 4, 'data_size_wrong');
 
+    return new Promise( (resolve, reject) => {
+
+      new Jimp({ data: Buffer.from(data), height: this.height, width: this.width} , (error, image) => {
+        if(error){
+          return reject(error);
+        }
+        // image.convolute([
+        //   [0, 0, 0, 0, 0],
+        //   [0, 1, 1, 1, 0],
+        //   [0, 1, 1, 1, 0],
+        //   [0, 1, 1, 1, 0],
+        //   [0, 0, 0, 0, 0],
+        // ]);
+        image.convolute([
+          [0.2, 0.2, 0.2],
+          [0.2, 0.2, 0.2],
+          [0.2, 0.2, 0.2]
+        ]);
+        // image.posterize(50);
+        const path = `${this.baseDir}/out${id ? `_${id}` : ''}.jpg`;
+        image.write(path, (error) => {
+
+          if(error){
+            return reject(error);
+          }
+
+          resolve();
+
+        });
+      });
+    });
+    /*
     const rawImageData = {
       data: data,
       width: this.width,
@@ -40,7 +73,7 @@ class Jpg {
       });
 
     });
-
+    */
   }
 
   getPath(id){

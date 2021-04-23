@@ -45,6 +45,7 @@
     "crypto-random-int": "^1.0.1",
     "dotenv": "^8.2.0",
     "instagram-web-api": "^2.2.2",
+    "jimp": "^0.16.1",
     "jpeg-js": "^0.4.3",
     "moment": "^2.29.1",
     "mongodb": "^3.6.6",
