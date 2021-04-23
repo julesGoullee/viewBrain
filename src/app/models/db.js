@@ -11,6 +11,7 @@ const Db = {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       keepAlive: true,
+      useCreateIndex: true
     });
 
     process.on('SIGINT', Db.disconnect);
