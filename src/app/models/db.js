@@ -10,7 +10,7 @@ const Db = {
       dbName: Config.mongo.dbName,
       useNewUrlParser: true,
       useUnifiedTopology: true,
-      keepAlive: true,
+      // keepAlive: true,
       useCreateIndex: true
     });
 
