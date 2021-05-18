@@ -9,8 +9,8 @@ const Db = {
     await mongoose.connect(Config.mongo.uri, {
       dbName: Config.mongo.dbName,
       useNewUrlParser: true,
-      useUnifiedTopology: true,
-      // keepAlive: true,
+      // useUnifiedTopology: true,
+      keepAlive: true,
       useCreateIndex: true,
       autoReconnect: true
     });
