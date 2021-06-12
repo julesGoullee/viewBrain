@@ -154,7 +154,7 @@ class Twitter extends Interface {
     logger.info('getNewFollowers finish all', { socialId: this.socialId });
 
 
-    return newFollowers;
+    return newFollowers.reverse();
 
   }
 
@@ -174,7 +174,7 @@ class Twitter extends Interface {
     assert(mediaRes.media_id_string, 'cannot_publish_media');
 
     const tweetRes = await this.limitedUploadPhotoTweet('statuses/update', {
-      status: `Bang! Please welcome the piece of @${username}! 💥\r\nIf you like this one you will love yours too! 👌\r\nFollow @avantgardenft to discover it! ❤️\r\n${this.contentTags}`,
+      status: `Bang! ⚡\r\n\r\nWe made this for you @${username}! 🎨\r\n\r\nRegister to become an AvantGardist and mint your unique #NFT:\r\nbeta.avant-garde.gallery\r\n\r\nTo discover yours,\r\nFollow @avantgardenft! 💘\r\n${this.contentTags}`,
       media_ids: mediaRes.media_id_string
     });
 
