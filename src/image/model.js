@@ -108,6 +108,7 @@ class Model {
 
   generate(){
 
+    tf.engine().startScope();
     const features = [];
 
     for(let i = 0; i < this.inputShape[1]; i++){
@@ -150,6 +151,8 @@ class Model {
 
     const regularize = Model.regularizeTensor(output);
     tf.dispose([input, regularize]);
+    tf.dispose(this.model);
+    tf.engine().endScope();
 
     return regularize;
 

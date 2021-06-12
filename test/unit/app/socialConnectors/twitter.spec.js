@@ -1,6 +1,8 @@
 const path = require('path');
+const sinon = require('sinon');
 const Twit = require('twitter');
 const fs = require('fs');
+const MockDb = require(path.join(srcDir, '../test/mockDb') );
 
 const Config = require(path.join(srcDir, '../config') );
 const { logger, wait } = require(path.join(srcDir, '/utils') );
@@ -28,7 +30,7 @@ describe('SocialConnectors:Twitter', () => {
 
   beforeEach( async () => {
 
-    this.sandbox = createSandbox();
+    this.sandbox = sinon.createSandbox();
     await MockDb.reset();
     this.twitter = new Twitter({
       consumerKey: 'consumerKey',
@@ -199,12 +201,12 @@ describe('SocialConnectors:Twitter', () => {
         }) ).to.be.true;
         expect(followers.length).to.be.eq(2);
         expect(followers[0]).to.be.deep.eq({
-          socialId: 'id1',
-          username: 'username1'
-        });
-        expect(followers[1]).to.be.deep.eq({
           socialId: 'id2',
           username: 'username2'
+        });
+        expect(followers[1]).to.be.deep.eq({
+          socialId: 'id1',
+          username: 'username1'
         });
 
       });
@@ -329,12 +331,12 @@ describe('SocialConnectors:Twitter', () => {
 
         expect(followers.length).to.eq(4);
         expect(followers[0]).to.be.deep.eq({
-          socialId: 'id1',
-          username: 'username'
-        });
-        expect(followers[3]).to.be.deep.eq({
           socialId: 'id4',
           username: 'username4'
+        });
+        expect(followers[3]).to.be.deep.eq({
+          socialId: 'id1',
+          username: 'username'
         });
 
       });
@@ -381,12 +383,12 @@ describe('SocialConnectors:Twitter', () => {
         expect(this.stubGetFollowers.callCount).to.be.eq(2);
         expect(followers.length).to.eq(3);
         expect(followers[0]).to.be.deep.eq({
-          socialId: 'id2',
-          username: 'username2'
-        });
-        expect(followers[2]).to.be.deep.eq({
           socialId: 'id4',
           username: 'username4'
+        });
+        expect(followers[2]).to.be.deep.eq({
+          socialId: 'id2',
+          username: 'username2'
         });
 
       });
@@ -438,12 +440,12 @@ describe('SocialConnectors:Twitter', () => {
         expect(this.stubGetFollowers.callCount).to.be.eq(2);
         expect(followers.length).to.eq(2);
         expect(followers[0]).to.be.deep.eq({
-          socialId: 'id1',
-          username: 'username'
-        });
-        expect(followers[1]).to.be.deep.eq({
           socialId: 'id2',
           username: 'username2'
+        });
+        expect(followers[1]).to.be.deep.eq({
+          socialId: 'id1',
+          username: 'username'
         });
 
       });
@@ -490,12 +492,12 @@ describe('SocialConnectors:Twitter', () => {
         expect(this.stubGetFollowers.callCount).to.be.eq(2);
         expect(followers.length).to.eq(3);
         expect(followers[0]).to.be.deep.eq({
-          socialId: 'id1',
-          username: 'username'
-        });
-        expect(followers[2]).to.be.deep.eq({
           socialId: 'id3',
           username: 'username3'
+        });
+        expect(followers[2]).to.be.deep.eq({
+          socialId: 'id1',
+          username: 'username'
         });
 
       });
@@ -525,7 +527,7 @@ describe('SocialConnectors:Twitter', () => {
 
       expect(this.stubUploadPhotoTweet.calledOnce).to.be.true;
       expect(this.stubUploadPhotoTweet.calledWith('statuses/update', {
-        status: `Just for you @username ${this.twitter.contentTags}`,
+        status: `Bang! ⚡\r\n\r\nWe made this for you @username! 🎨\r\n\r\nRegister to become an AvantGardist and mint your unique #NFT:\r\nbeta.avant-garde.gallery\r\n\r\nTo discover yours,\r\nFollow @avantgardenft! 💘\r\n${this.twitter.contentTags}`,
         media_ids: 'media_id_string'
       }) ).to.be.true;
 

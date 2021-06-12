@@ -1,4 +1,5 @@
 const path = require('path');
+const sinon = require('sinon');
 
 const Config = require(path.join(srcDir, '../config') );
 const Logger = require(path.join(srcDir, '/utils/logger') );
@@ -7,7 +8,7 @@ describe('Logger', () => {
 
   beforeEach(async () => {
 
-    this.sandbox = createSandbox();
+    this.sandbox = sinon.createSandbox();
 
   });
 

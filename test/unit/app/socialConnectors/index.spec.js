@@ -1,4 +1,6 @@
 const path = require('path');
+const sinon = require('sinon');
+
 const Config = require(path.join(srcDir, '../config') );
 const SocialConnectors = require(path.join(srcDir, '/app/socialConnectors') );
 const Instagram = require(path.join(srcDir, '/app/socialConnectors/instagram') );
@@ -8,7 +10,7 @@ describe('SocialConnectors', () => {
 
   beforeEach( () => {
 
-    this.sandbox = createSandbox();
+    this.sandbox = sinon.createSandbox();
 
   });
 

@@ -1,4 +1,6 @@
 const path = require('path');
+const sinon = require('sinon');
+const MockDb = require(path.join(srcDir, '../test/mockDb') );
 
 const Db = require(path.join(srcDir, '/app/models/db') );
 
@@ -18,7 +20,7 @@ describe('Db', () => {
 
   beforeEach(async () => {
 
-    this.sandbox = createSandbox();
+    this.sandbox = sinon.createSandbox();
     await MockDb.reset();
 
   });

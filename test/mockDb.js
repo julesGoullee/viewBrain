@@ -18,7 +18,7 @@ const Mock = {
       },
     });
 
-    await Mock.mongod.getConnectionString();
+    config.mongo.uri = await Mock.mongod.getUri();
 
   },
 
@@ -37,7 +37,6 @@ const Mock = {
   async stop(){
 
     await Mock.mongod.stop();
-
   }
 };
 

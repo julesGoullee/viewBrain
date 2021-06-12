@@ -9,6 +9,7 @@ class TagWatcher {
   constructor({ socialConnector }){
 
     this.socialConnector = socialConnector;
+    this.usersBatch = [];
     this.usersByTag = Config.tagWatcher.tags.reduce((acc, tag) => {
 
       acc[tag] = [];
@@ -51,6 +52,7 @@ class TagWatcher {
 
   async watchForFollowing(){
 
+    this.usersBatch = [];
     Config.tagWatcher.tags.forEach( (tag) => {
 
       this.usersByTag[tag] = [];
@@ -70,6 +72,7 @@ class TagWatcher {
       this.usersByTag[tag] = [];
 
     });
+    this.usersBatch = [];
 
   }
 
@@ -88,7 +91,12 @@ class TagWatcher {
 
   onNewPost({ tag, user }){
 
-    this.usersByTag[tag].push(user);
+    if(!this.usersBatch.find(oneUser => oneUser.socialId === user.socialId) ){
+
+      this.usersByTag[tag].push(user);
+      this.usersBatch.push(user);
+
+    }
 
   }
 
