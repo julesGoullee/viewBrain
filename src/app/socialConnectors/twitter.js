@@ -174,7 +174,7 @@ class Twitter extends Interface {
     assert(mediaRes.media_id_string, 'cannot_publish_media');
 
     const tweetRes = await this.limitedUploadPhotoTweet('statuses/update', {
-      status: `Bang! ⚡\r\n\r\nWe made this for you @${username}! 🎨\r\n\r\nRegister to become an AvantGardist and mint your unique #NFT:\r\nbeta.avant-garde.gallery\r\n\r\nTo discover yours,\r\nFollow @avantgardenft! 💘\r\n\r\n${this.contentTags}`,
+      status: `Bang! ⚡\r\n\r\nWe made this for you @${username}! 🎨\r\n\r\nRegister to become an AvantGardist and mint your unique #NFT:\r\nbeta.avant-garde.gallery\r\n\r\nTo discover yours,\r\nFollow us @avantgardenft! 💘\r\n\r\n${this.contentTags}`,
       media_ids: mediaRes.media_id_string
     });
 

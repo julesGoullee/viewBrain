@@ -527,7 +527,7 @@ describe('SocialConnectors:Twitter', () => {
 
       expect(this.stubUploadPhotoTweet.calledOnce).to.be.true;
       expect(this.stubUploadPhotoTweet.calledWith('statuses/update', {
-        status: `Bang! ⚡\r\n\r\nWe made this for you @username! 🎨\r\n\r\nRegister to become an AvantGardist and mint your unique #NFT:\r\nbeta.avant-garde.gallery\r\n\r\nTo discover yours,\r\nFollow @avantgardenft! 💘\r\n\r\n${this.twitter.contentTags}`,
+        status: `Bang! ⚡\r\n\r\nWe made this for you @username! 🎨\r\n\r\nRegister to become an AvantGardist and mint your unique #NFT:\r\nbeta.avant-garde.gallery\r\n\r\nTo discover yours,\r\nFollow us @avantgardenft! 💘\r\n\r\n${this.twitter.contentTags}`,
         media_ids: 'media_id_string'
       }) ).to.be.true;
 
