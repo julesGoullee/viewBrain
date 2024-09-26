@@ -1,4 +1,6 @@
 const path = require('path');
+const sinon = require('sinon');
+const MockDb = require(path.join(srcDir, '../test/mockDb') );
 
 const Db = require(path.join(srcDir, '/app/models/db') );
 const Follower = require(path.join(srcDir, '/app/models/follower') );
@@ -22,7 +24,7 @@ describe('Follower', () => {
 
   beforeEach(async () => {
 
-    this.sandbox = createSandbox();
+    this.sandbox = sinon.createSandbox();
     await MockDb.reset();
 
     this.follower = new Follower({

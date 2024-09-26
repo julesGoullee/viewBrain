@@ -1,15 +1,15 @@
-FROM node:10.13.0 as builder
+FROM node:14.16.0 as builder
 
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
 ENV NODE_ENV=production
 
-COPY package.json yarn.lock /usr/src/app/
-RUN yarn install --non-interactive --production
+COPY package.json package-lock.json /usr/src/app/
+RUN npm install --non-interactive --production
 
 
-FROM node:10.13.0 as release
+FROM node:14.16.0 as release
 
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app

@@ -6,7 +6,6 @@ let Viewer = null;
 
 if(isNode() ){
 
-  require('@tensorflow/tfjs');
   require('@tensorflow/tfjs-node');
   Viewer = require('./jpg');
 
@@ -25,45 +24,6 @@ class Render {
     this.width = width;
     this.blackWhite = blackWhite || false;
     this.viewer = new Viewer({ height, width });
-
-    this.create();
-
-  }
-
-  create(){
-
-  }
-
-    drawRandom(){
-
-    const data = [];
-
-    for (let i = 0; i < this.width * this.height * 4; i += 4) {
-
-      if(this.blackWhite){
-
-        const random = Render._randomInt(0, 255);
-        data.push(
-          random, // red
-          random, // green
-          random, // blue
-          // 255 // alpha
-        );
-
-      } else {
-
-        data.push(
-          Render._randomInt(0, 255), // red
-          Render._randomInt(0, 255), // green
-          Render._randomInt(0, 255), // blue
-          // 255 // alpha
-        );
-
-      }
-
-    }
-
-    return data;
 
   }
 

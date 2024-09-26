@@ -1,4 +1,6 @@
 const path = require('path');
+const sinon = require('sinon');
+const MockDb = require(path.join(srcDir, '../test/mockDb') );
 
 const MockSocialConnector = require('../../mocks/socialConnector');
 const Config = require(path.join(srcDir, '../config') );
@@ -27,7 +29,7 @@ describe('App:Run', () => {
 
   beforeEach(async () => {
 
-    this.sandbox = createSandbox();
+    this.sandbox = sinon.createSandbox();
     this.SocialConnector = MockSocialConnector(this.sandbox);
     this.mockSocialConnector = new this.SocialConnector();
     this.stubSocialConnectorsInit = this.sandbox.stub(SocialConnectors, 'init').returns(this.mockSocialConnector);

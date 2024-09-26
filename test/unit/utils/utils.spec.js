@@ -1,4 +1,5 @@
 const path = require('path');
+const sinon = require('sinon');
 
 const Utils = require(path.join(srcDir, '/utils') );
 
@@ -6,7 +7,7 @@ describe('Utils', () => {
 
   beforeEach(async () => {
 
-    this.sandbox = createSandbox();
+    this.sandbox = sinon.createSandbox();
 
   });
 

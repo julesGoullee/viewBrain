@@ -15,7 +15,7 @@ class Instagram extends Interface {
 
     super();
     assert(username && password, 'invalid_credentials');
-    const cookieStore = new FileCookieStore(`./data/cookies_${username}.json`);
+    const cookieStore = new FileCookieStore('/tmp/cookies_${username}.json');
     this.username = username;
     this.socialId = null;
     this.initilized = false;

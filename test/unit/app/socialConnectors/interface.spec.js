@@ -1,4 +1,5 @@
 const path = require('path');
+const sinon = require('sinon');
 
 const Interface = require(path.join(srcDir, '/app/socialConnectors/interface') );
 
@@ -6,7 +7,7 @@ describe('SocialConnectors:Interface', () => {
 
   beforeEach( () => {
 
-    this.sandbox = createSandbox();
+    this.sandbox = sinon.createSandbox();
 
   });
 

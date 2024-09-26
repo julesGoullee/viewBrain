@@ -50,21 +50,20 @@ module.exports = {
   tagWatcher: {
 
     enable: process.env.TAG_WATCHER_ENABLE === 'true' || false,
-    tags: process.env.TAG_WATCHER_TAGS !== '' && process.env.TAG_WATCHER_TAGS.split(',') || [
+    tags: process.env.TAG_WATCHER_TAGS && process.env.TAG_WATCHER_TAGS !== '' && process.env.TAG_WATCHER_TAGS.split(',') || [
       'abstractart',
-      'NFTart',
-      'NFTartist',
-      // 'generativeart',
+      'creativecoding',
+      'generative',
+      'generativeart',
       // 'contemporaryart',
-      'NFT',
-      'NFTs',
+      'colors',
       // 'color',
       // 'colour',
-      'cryptoart',
-      'NFTCommunity',
-      'cryptoart',
+      'abstract',
+      'digitalart',
+      'codeart',
       'art',
-      'ethereum',
+      'creative',
     ],
 
     intervalFollow: process.env.TAG_WATCHER_INTERVAL_FOLLOW || '3600000', // 1 hour

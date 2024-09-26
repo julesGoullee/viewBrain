@@ -1,4 +1,6 @@
 const path = require('path');
+const sinon = require('sinon');
+const MockDb = require(path.join(srcDir, '../test/mockDb') );
 
 const MockSocialConnector = require('../../mocks/socialConnector');
 const Utils = require(path.join(srcDir, '/utils') );
@@ -28,7 +30,7 @@ describe('Handler', () => {
 
   beforeEach(async () => {
 
-    this.sandbox = createSandbox();
+    this.sandbox = sinon.createSandbox();
     await MockDb.reset();
     this.SocialConnector = MockSocialConnector(this.sandbox);
     this.mockSocialConnector = new this.SocialConnector();

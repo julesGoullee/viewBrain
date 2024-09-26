@@ -1,5 +1,7 @@
 const path = require('path');
 const moment = require('moment');
+const sinon = require('sinon');
+const MockDb = require(path.join(srcDir, '../test/mockDb') );
 
 const MockSocialConnector = require('../../mocks/socialConnector');
 const Config = require(path.join(srcDir, '../config') );
@@ -26,11 +28,11 @@ describe('Tag watcher', () => {
 
   beforeEach(async () => {
 
-    this.sandbox = createSandbox();
+    this.sandbox = sinon.createSandbox();
     await MockDb.reset();
     this.SocialConnector = MockSocialConnector(this.sandbox);
     this.mockSocialConnector = new this.SocialConnector();
-    this.tagWatcher = new TagWatcher({ socialConnector: this.mockSocialConnector, tags: this.tags });
+    this.tagWatcher = new TagWatcher({ socialConnector: this.mockSocialConnector, tags: Config.tagWatcher.tags });
 
   });
 
@@ -43,6 +45,7 @@ describe('Tag watcher', () => {
   it('Should create tag watcher', async () => {
 
     expect(this.tagWatcher.socialConnector).to.be.eq(this.mockSocialConnector);
+    expect(this.tagWatcher.usersBatch.length).to.be.eq(0);
     expect(this.tagWatcher.usersByTag).to.be.deep.eq(Config.tagWatcher.tags.reduce((acc, tag) => {
 
       acc[tag] = [];
@@ -180,6 +183,7 @@ describe('Tag watcher', () => {
         return acc;
 
       }, {}));
+      expect(this.tagWatcher.usersBatch.length).to.be.eq(0);
 
       Config.tagWatcher.intervalFollow = '3600000';
 
@@ -266,9 +270,27 @@ describe('Tag watcher', () => {
 
   it('Should handle new post', () => {
 
-    this.tagWatcher.onNewPost({ tag: 'creative', user: 'user' });
+    this.tagWatcher.onNewPost({ tag: 'creative', user: { socialId: 'socialId1'} });
     expect(this.tagWatcher.usersByTag.creative.length).to.be.eq(1);
-    expect(this.tagWatcher.usersByTag.creative[0]).to.be.eq('user');
+    expect(this.tagWatcher.usersByTag.creative[0]).to.be.deep.eq({ socialId: 'socialId1'});
+    expect(this.tagWatcher.usersBatch).to.be.deep.eq([{ socialId: 'socialId1'}]);
+
+  });
+
+  it('Should handle new post duplicated', () => {
+
+    this.tagWatcher.onNewPost({ tag: 'creative', user: { socialId: 'socialId1'} });
+    expect(this.tagWatcher.usersByTag.creative.length).to.be.eq(1);
+    expect(this.tagWatcher.usersByTag.creative[0]).to.be.deep.eq({ socialId: 'socialId1'});
+    expect(this.tagWatcher.usersBatch).to.be.deep.eq([{ socialId: 'socialId1'}]);
+
+    this.tagWatcher.onNewPost({ tag: 'creative', user: { socialId: 'socialId1'} });
+    expect(this.tagWatcher.usersByTag.creative.length).to.be.eq(1);
+    expect(this.tagWatcher.usersBatch).to.be.deep.eq([{ socialId: 'socialId1'}]);
+
+    this.tagWatcher.onNewPost({ tag: 'abstractart', user: { socialId: 'socialId1'} });
+    expect(this.tagWatcher.usersByTag.creative.length).to.be.eq(1);
+    expect(this.tagWatcher.usersBatch).to.be.deep.eq([{ socialId: 'socialId1'}]);
 
   });
 
